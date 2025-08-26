@@ -18,7 +18,9 @@ std::any Context::get(int offSet){
 void Context::set(int offSet, const std::any& val){
     if (offSet > 0 && offSet < stack.size()){
         stack[offSet] = val;
-    }if (offSet >= stack.size()){
+    }
+
+    if (offSet >= stack.size()){
         stack.resize(offSet + 10);
         stack[offSet] = val;
     }

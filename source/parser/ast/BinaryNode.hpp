@@ -4,6 +4,10 @@
 #include "Operations.hpp"
 #include "Node.hpp"
 
+enum class Type;
+
+bool checkExpressionType(Node* expression, Type type) ;
+
 class BinaryNode : public Node{
 private:
     Node* left;
@@ -12,6 +16,7 @@ private:
 public:
     BinaryNode(Node* left, Node* right, Operations operation);
     std::any evaluate(Context& context) override;
+    bool isExpressionType(Type type);
 };
 
 

@@ -7,6 +7,8 @@
 #include "ast/BoolLiteral.hpp"
 #include "ast/StringLiteral.hpp"
 #include "ast/Variable.hpp"
+#include "../utils.hpp"
+#include "ast/CharLiteral.hpp"
 #include "fmt/base.h"
 
 Parser::Parser() :pos(0),tokens{} {}
@@ -62,10 +64,10 @@ Node* Parser::statement() {
 }
 
 Node* Parser::expression() {
-    return plusMinus();
+    return addSub();
 }
 
-Node *Parser::plusMinus() {
+Node *Parser::addSub() {
     Node* node = mulMiv();
     while (current().getValue() == "+" || current().getValue() == "-") {
         Token op = current();
@@ -107,13 +109,16 @@ Node *Parser::factor() {
         case TokenType::FALSE:
             eat(TokenType::FALSE);
             return new BooleanLiteral(false);
+        case TokenType::CHARACTER:
+            eat(TokenType::CHARACTER);
+            return new CharLiteral(static_cast<char>(std::stoi(tok.getValue())));
         case TokenType::ID:{
                 std::string name = tok.getValue();
                 eat(TokenType::ID);
                 if (offsets.find(name) == offsets.end()) {
                     throw std::runtime_error("not find this variable : " + name);
                 }
-                return new Variable(offsets[name]);
+                return new Variable(offsets[name],types[name]);
         }
         case TokenType::LPAREN: {
             eat(TokenType::LPAREN);
@@ -126,42 +131,25 @@ Node *Parser::factor() {
     }
 }
 
-Node *Parser::declaration(std::string type,std::string name) {
+Node *Parser::declaration(const std::string& type, const std::string& name) {
     if (type == "int") { types[name] = Type::INT; }
-    else if (type == "string") { types[name] = Type::STRING; }
+    else if (type == "str") { types[name] = Type::STRING; }
     else if (type == "char") { types[name] = Type::CHAR; }
-    else if (type == "bool") { types[name] = Type::BOOLEAN; }
+    else if (type == "boolean") { types[name] = Type::BOOLEAN; }
+
+    offsets[name] = currentOffset;
+    int assignedOffset = currentOffset;
+    ++currentOffset;
+
     eat(TokenType::ASSIGN);
     Node* right = expression();
 
-    Type expectedType = types[name];
-
-    bool isTypeValid = false;
-
-    switch (expectedType) {
-        case Type::INT:
-            isTypeValid = dynamic_cast<NumberLiteral*>(right) != nullptr;
-            break;
-        case Type::STRING:
-            isTypeValid = dynamic_cast<StringLiteral*>(right) != nullptr;
-            break;
-        case Type::BOOLEAN:
-            isTypeValid = dynamic_cast<BooleanLiteral*>(right) != nullptr;
-            break;
-        default:
-            std::cerr << "unsupported type" << std::endl;
-            exit(1);
-    }
-
-    if (!isTypeValid) {
-        std::cerr << "error type dont euavial value : " << name << std::endl;
+    if (!checkExpressionType(right, types[name])) {
+        std::cerr << "error: type mismatch in declaration of " << name << std::endl;
         exit(1);
     }
 
-    offsets[name] = currentOffset;
-    auto assign = new Assign(currentOffset, right);
-    ++currentOffset;
-    return assign;
+    return new Assign(assignedOffset,right);
 }
 
 Node *Parser::reassigment() {

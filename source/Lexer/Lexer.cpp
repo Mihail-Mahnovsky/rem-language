@@ -73,13 +73,14 @@ std::vector<Token> Lexer::tokeNize(std::string line) {
                 else if (*it == '\"') {
                     ++it;
                     std::string res = std::string(1,*it);
+                    ++it;
                     while (isalpha(*it) && it != line.end()) {
                         res += *it;
                         ++it;
                     }
                     if (it == line.end())
                         throw std::runtime_error("Unterminated string literal");
-                    ++it;
+                    //++it;
                     tokens.push_back(Token(TokenType::STRING, res));
                 }
                 else if (*it == '\'') {

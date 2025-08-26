@@ -18,14 +18,14 @@ private:
 
     bool peek(TokenType wantType);
     void eat(TokenType type);
-    Token current() {return tokens[pos];};
+    Token current() { if (pos < tokens.size()) {return tokens[pos];} else return tokens.back(); };
     std::vector<Node*> statement_list();
     Node* statement();
     Node* expression();
-    Node* plusMinus();
+    Node* addSub();
     Node* mulMiv();
     Node* factor();
-    Node* declaration(std::string type,std::string name);
+    Node* declaration(const std::string& type, const std::string& name);
     Node* reassigment();
 public:
     Parser();

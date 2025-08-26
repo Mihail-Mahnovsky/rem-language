@@ -7,7 +7,7 @@ private:
 public:
     BooleanLiteral(bool value) : value(value) {};
     std::any evaluate(Context& context) override {
-        bool value;
+        return value;
     }
 };
 

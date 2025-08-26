@@ -1,2 +1,4 @@
-int x = 5;
-print x+4+4;
+str h = "str" + "rrr";
+str j = "das";
+char chr = 'F';
+print chr + h + "gondon" + j + chr;
