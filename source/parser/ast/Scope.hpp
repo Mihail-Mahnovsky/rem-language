@@ -9,7 +9,7 @@ private:
     std::vector<Node*> nodes;
 public:
     Scope(std::vector<Node*> nodes) :nodes(nodes) {};
-    std::any evaluate() override {
+    std::any evaluate(Context& context) override {
         return std::any();
     }
 };

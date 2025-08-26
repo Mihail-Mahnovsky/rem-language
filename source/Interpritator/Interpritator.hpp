@@ -1,16 +1,14 @@
 #ifndef REMLANG_INTERPRITATOR_HPP
 #define REMLANG_INTERPRITATOR_HPP
 
-#include <vector>
 #include <any>
-#include <unordered_map>
 
+#include "../parser/ast/Context.hpp"
 #include "../parser/Parser.hpp"
 
 class Interpritator {
 private:
-    //std::vector<std::any> stack;
-    std::unordered_map<std::string, std::any> variables;
+    Context context;
 public:
     Interpritator();
     void execute(std::vector<Node*> nodes);

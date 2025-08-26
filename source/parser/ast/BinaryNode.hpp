@@ -11,7 +11,7 @@ private:
     Operations operation;
 public:
     BinaryNode(Node* left, Node* right, Operations operation);
-    std::any evaluate() override;
+    std::any evaluate(Context& context) override;
 };
 
 

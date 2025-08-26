@@ -7,12 +7,12 @@
 
 class Assign : public Node {
 private:
-    std::string name;
+    int offSet;
     Node* right;
 public:
-    Assign(std::string name, Node* right);
-    std::any evaluate() override;
-    std::string getName() { return name; }
+    Assign(int offSet, Node* right);
+    std::any evaluate(Context& context) override;
+    int getOffSet() { return offSet; }
 };
 
 #endif

@@ -5,12 +5,12 @@
 
 class Variable : public Node {
 private:
-    std::any value;
+    unsigned int offSet;
 public:
-    std::any evaluate() override {
-        return value;
+    std::any evaluate(Context& context) override {
+        return context.get(offSet);
     }
-    Variable(std::any value) : value(value) {}
+    Variable(unsigned int offSet) : offSet(offSet) {}
 };
 
 #endif

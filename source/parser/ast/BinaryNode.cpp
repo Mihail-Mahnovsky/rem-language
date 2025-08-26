@@ -4,9 +4,9 @@
 
 BinaryNode::BinaryNode(Node *left, Node *right, Operations operation) :left(left),right(right),operation(operation){}
 
-std::any BinaryNode::evaluate() {
-    std::any leftVal = left->evaluate();
-    std::any rightVal = right->evaluate();
+std::any BinaryNode::evaluate(Context& context) {
+    std::any leftVal = left->evaluate( context);
+    std::any rightVal = right->evaluate(context);
 
     if (leftVal.type() == typeid(double) && rightVal.type() == typeid(double)) {
         double l = std::any_cast<double>(leftVal);

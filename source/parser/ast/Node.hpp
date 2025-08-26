@@ -4,9 +4,11 @@
 
 #include <any>
 
+#include "Context.hpp"
+
 class Node {
 public:
-    virtual std::any evaluate() = 0;
+    virtual std::any evaluate(Context& context) = 0;
     virtual ~Node() = default;
 };
 

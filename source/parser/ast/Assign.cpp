@@ -1,7 +1,9 @@
 #include "Assign.hpp"
 
-Assign::Assign(std::string name, Node* right) :name(name),right(right){}
+Assign::Assign(int offSet, Node* right) :offSet(offSet),right(right){}
 
-std::any Assign::evaluate() {
-    return right->evaluate();
+std::any Assign::evaluate(Context& context) {
+    std::any value = right->evaluate(context);
+    context.set(offSet, value);
+    return value;
 }

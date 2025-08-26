@@ -3,12 +3,12 @@
 
 #include "Node.hpp"
 
-class NumberConstant : public Node {
+class NumberLiteral : public Node {
 private:
     double value;
 public:
-    NumberConstant(double value) : value(value) {};
-    std::any evaluate() override {
+    NumberLiteral(double value) : value(value) {};
+    std::any evaluate(Context& context) override {
         return value;
     }
 };
