@@ -23,13 +23,5 @@ int main(void) {
     }else {
         std::cerr << "Could not open file" << std::endl;
     }
-
-    //for (Node* node : nodes) {
-      //  auto binOp = dynamic_cast<BinaryNode*>(node);
-        //if (!binOp) {
-          //  std::cerr << "Error in operation" << std::endl;
-        //}
-     //   std::cout << std::any_cast<double>(binOp->evaluate());
-    //}
     return 0;
 }
