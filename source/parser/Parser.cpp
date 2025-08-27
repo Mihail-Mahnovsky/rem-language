@@ -15,7 +15,6 @@
 #include "ast/Scope.hpp"
 #include "ast/UnaryNode.hpp"
 #include "ast/while.hpp"
-#include "fmt/base.h"
 
 Parser::Parser() :pos(0),tokens{} {}
 

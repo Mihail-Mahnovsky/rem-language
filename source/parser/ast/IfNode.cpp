@@ -5,6 +5,7 @@ IfNode::IfNode(std::vector<Block> blocks)
 {}
 
 std::any IfNode::evaluate(Context& context) {
+    context.pushNewFrame();
     for (auto& block : blocks) {
         if (block.getCondition().has_value()) {
             Node* condNode = block.getCondition().value();
@@ -18,6 +19,6 @@ std::any IfNode::evaluate(Context& context) {
             return block.getScope()->evaluate(context);
         }
     }
-
+    context.popFrame();
     return {};
 }

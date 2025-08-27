@@ -4,13 +4,13 @@
 #include "../parser/ast/BinaryNode.hpp"
 #include "../parser/ast/Echo.hpp"
 
-Interpritator::Interpritator() :context(){
+Interpreter::Interpreter() :context(){
 }
 
-Interpritator::~Interpritator(){
+Interpreter::~Interpreter(){
 }
 
-void Interpritator::execute(std::vector<Node*> nodes) {
+void Interpreter::execute(std::vector<Node*> nodes) {
     for (auto executeNode : nodes) {
         executeNode->evaluate(context);
     }

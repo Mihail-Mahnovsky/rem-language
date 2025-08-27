@@ -6,12 +6,12 @@
 #include "../parser/ast/Context.hpp"
 #include "../parser/Parser.hpp"
 
-class Interpritator {
+class Interpreter {
 private:
     Context context;
 public:
-    Interpritator();
-    ~Interpritator();
+    Interpreter();
+    ~Interpreter();
     void execute(std::vector<Node*> nodes);
 };
 

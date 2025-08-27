@@ -104,8 +104,6 @@ std::any BinaryNode::evaluate(Context& context) {
     else if (leftVal.type() == typeid(std::string) && rightVal.type() == typeid(std::string)) {return evalString(leftVal,rightVal);}
     else if ((leftVal.type() == typeid(char) && rightVal.type() == typeid(std::string)) || (leftVal.type() == typeid(std::string) && rightVal.type() == typeid(char))) {return evalChar(leftVal,rightVal);}
 
-    //тут просто через елз иф пишешь другие реальзацы(строки чары и тд)
-
     //throw std::runtime_error("Unsupported operand types");
 }
 

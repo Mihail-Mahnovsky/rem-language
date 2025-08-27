@@ -12,7 +12,9 @@ public:
     While(Node* condition, Scope* scope) :condition(condition), scope(scope){}
     std::any evaluate(Context& context) override{
         while (std::any_cast<bool>(this->condition->evaluate(context))){
+            context.pushNewFrame();
             scope->evaluate(context);
+            context.popFrame();
         }
 
         return {};

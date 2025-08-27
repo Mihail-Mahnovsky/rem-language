@@ -1,6 +1,6 @@
 #include "Lexer/Lexer.hpp"
 #include "parser/Parser.hpp"
-#include "Interpritator/Interpritator.hpp"
+#include "interpreter/Interpritator.hpp"
 #include <iostream>
 #include "parser/ast/BinaryNode.hpp"
 #include <fstream>
@@ -8,7 +8,7 @@
 int main(void) {
     Lexer lexer = Lexer();
     Parser parser = Parser();
-    Interpritator interpreter = Interpritator();
+    Interpreter interpreter = Interpreter();
     std::ifstream inputFile("../examples/hello_world.rem");
     if (inputFile.is_open()) {
         std::string res;
