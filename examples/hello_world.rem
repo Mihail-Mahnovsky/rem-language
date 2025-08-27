@@ -1,5 +1,5 @@
 int x = 6;
 int y = 5;
 str hl = "test";
-boolean test = x >= y and x != 6;
-print !test;
+boolean test = x >= y and x != 6 or 2 == 2;
+print hl == "test";
