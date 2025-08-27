@@ -25,5 +25,6 @@ add_executable(remlang ${SOURCE_FILES}
         source/parser/ast/UnaryNode.hpp
         source/parser/ast/IfNode.cpp
         source/parser/ast/IfNode.hpp
+        source/parser/ast/while.hpp
 )
 target_link_libraries(remlang PRIVATE fmt::fmt)

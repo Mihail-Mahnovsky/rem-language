@@ -92,6 +92,7 @@ std::vector<Token> Lexer::tokeNize(std::string line) {
                     else if (res == "if") { tokens.push_back(Token(TokenType::IF, res));}
                     else if (res == "else") { tokens.push_back(Token(TokenType::ELSE, res));}
                     else if (res == "elif") {tokens.push_back(Token(TokenType::ELIF, res));}
+                    else if (res == "while") {tokens.push_back(Token(TokenType::WHILE, res));}
                     else { tokens.push_back(Token(TokenType::ID, res)); }
                 }
                 else if (*it == '\"') {

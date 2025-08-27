@@ -8,7 +8,7 @@
 
 BinaryNode::BinaryNode(Node *left, Node *right, Operations operation) :left(left),right(right),operation(operation){}
 
-std::any BinaryNode::evalDouble(std::any rightVal,std::any leftVal)
+std::any BinaryNode::evalDouble(std::any leftVal,std::any rightVal)
 {
     double l = std::any_cast<double>(leftVal);
     double r = std::any_cast<double>(rightVal);
@@ -94,6 +94,10 @@ std::any BinaryNode::evalChar(std::any rightVal, std::any leftVal){
 std::any BinaryNode::evaluate(Context& context) {
     std::any leftVal = left->evaluate( context);
     std::any rightVal = right->evaluate(context);
+    if (!left || !right) {
+        throw std::runtime_error("null operand in BinaryNode");
+    }
+
 
     if (leftVal.type() == typeid(double) && rightVal.type() == typeid(double)) {return evalDouble(leftVal,rightVal);}
     else if (leftVal.type() == typeid(bool) && rightVal.type() == typeid(bool)) { return evalBool(leftVal,rightVal); }
@@ -102,12 +106,10 @@ std::any BinaryNode::evaluate(Context& context) {
 
     //тут просто через елз иф пишешь другие реальзацы(строки чары и тд)
 
-    throw std::runtime_error("Unsupported operand types");
+    //throw std::runtime_error("Unsupported operand types");
 }
 
 bool BinaryNode::isExpressionType(Type type) {
-    //const bool res = checkExpressionType(left, type);
-    //return res && checkExpressionType(right, type);
     switch (operation)
     {
     case Operations::PLUS:

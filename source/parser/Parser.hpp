@@ -33,6 +33,7 @@ private:
     Node* declaration(const std::string& type, const std::string& name);
     Node* reassigment();
     Node* parseIf();
+    Node* parseWhile();
     std::vector<Node*> parseScope();
 public:
     Parser();

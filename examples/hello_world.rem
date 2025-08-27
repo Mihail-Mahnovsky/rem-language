@@ -1,10 +1,6 @@
-int x = 4
-if (2 != 2 and 7 == 7){
-    print "tr"
-}
-elif (2 + 3 == 5 or x == 4){
-    print "real"
-}
-else {
-    print "fal"
+int index = 0
+boolean a = true
+while(index <= 10 and a){
+    print index
+    index = index + 1
 }

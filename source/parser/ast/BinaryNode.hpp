@@ -15,10 +15,10 @@ private:
     Node* left;
     Node* right;
     Operations operation;
-    std::any evalDouble(std::any rightVal,std::any leftVal);
-    std::any evalBool(std::any rightVal,std::any leftVal);
-    std::any evalString(std::any rightVal, std::any leftVal);
-    std::any evalChar(std::any rightVal,std::any leftVal);
+    std::any evalDouble(std::any leftVal,std::any rightVal);
+    std::any evalBool(std::any leftVal,std::any rightVal);
+    std::any evalString(std::any leftVal, std::any rightVal);
+    std::any evalChar(std::any leftVal,std::any rightVal);
 public:
     BinaryNode(Node* left, Node* right, Operations operation);
     std::any evaluate(Context& context) override;

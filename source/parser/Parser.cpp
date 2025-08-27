@@ -14,6 +14,7 @@
 #include "ast/IfNode.hpp"
 #include "ast/Scope.hpp"
 #include "ast/UnaryNode.hpp"
+#include "ast/while.hpp"
 #include "fmt/base.h"
 
 Parser::Parser() :pos(0),tokens{} {}
@@ -57,6 +58,8 @@ Node* Parser::statement() {
             if (peek(TokenType::ASSIGN)){
                 return reassigment();
             }
+        case TokenType::WHILE:
+            return parseWhile();
         case TokenType::PRINT:
             eat(TokenType::PRINT);
             return new Echo(expression());
@@ -279,6 +282,16 @@ Node* Parser::parseIf(){
     return new IfNode(blocks);
 }
 
+Node* Parser::parseWhile(){
+    eat(TokenType::WHILE);
+    eat(TokenType::LPAREN);
+    Node* condition = expression();
+    eat(TokenType::RPAREN);
+    Scope* scope = new Scope(parseScope());
+    return new While(condition,scope);
+}
+
+
 
 bool Parser::peek(TokenType wantType) {
     if (pos < tokens.size() && tokens[pos + 1].getType() == wantType) {
@@ -292,6 +305,6 @@ void Parser::eat(TokenType type) {
         ++pos;
     }
     else {
-        throw std::invalid_argument("Invalid token type " + current().toString());
+        throw std::invalid_argument("Invaliddd token type " + current().toString());
     }
 }

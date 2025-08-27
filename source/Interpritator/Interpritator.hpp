@@ -11,6 +11,7 @@ private:
     Context context;
 public:
     Interpritator();
+    ~Interpritator();
     void execute(std::vector<Node*> nodes);
 };
 
