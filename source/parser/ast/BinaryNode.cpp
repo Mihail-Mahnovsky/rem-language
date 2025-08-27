@@ -4,7 +4,6 @@
 
 #include "NumberLiteral.hpp"
 #include "StringLiteral.hpp"
-#include "Variable.hpp"
 #include "../types.hpp"
 
 BinaryNode::BinaryNode(Node *left, Node *right, Operations operation) :left(left),right(right),operation(operation){}
@@ -27,10 +26,42 @@ std::any BinaryNode::evaluate(Context& context) {
             case Operations::DIVISION:
                 if (r == 0) throw std::runtime_error("Division by zero");
                 return l / r;
+            case Operations::EQUAL:
+                return l == r;
+            case Operations::NOTEQUAL:
+                return l != r;
+            case Operations::MIN:
+                return l < r;
+            case Operations::MAX:
+                return l > r;
+            case Operations::MINEQUAL:
+                return l <= r;
+            case Operations::MAXEQUAL:
+                return l >= r;
             default:
                 throw std::runtime_error("Unknown operation");
         }
     }
+
+    else if (leftVal.type() == typeid(bool) && rightVal.type() == typeid(bool)) {
+        bool l = std::any_cast<bool>(leftVal);
+        bool r = std::any_cast<bool>(rightVal);
+
+        switch (operation) {
+        case Operations::AND:
+            return l && r;
+        case Operations::OR:
+            return l || r;
+        case Operations::EQUAL:
+            return l == r;
+        case Operations::NOTEQUAL:
+            return l != r;
+        default:
+            throw std::runtime_error("Unsupported boolean operation");
+        }
+    }
+
+
     else if (leftVal.type() == typeid(std::string) && rightVal.type() == typeid(std::string)) {
         std::string l = std::any_cast<std::string>(leftVal);
         std::string r = std::any_cast<std::string>(rightVal);
@@ -38,19 +69,22 @@ std::any BinaryNode::evaluate(Context& context) {
         switch (operation) {
             case Operations::PLUS:
                 return l + r;
+            case Operations::EQUAL:
+                return l == r;
+            case Operations::NOTEQUAL:
+                return l != r;
             default:
                 throw std::runtime_error("Unknown operation for string");
         }
     }
+
     else if ((leftVal.type() == typeid(char) && rightVal.type() == typeid(std::string)) || (leftVal.type() == typeid(std::string) && rightVal.type() == typeid(char))) {
         std::string l = (leftVal.type() == typeid(char) && rightVal.type() == typeid(std::string))
                         ? std::string(1, std::any_cast<char>(leftVal))
                         : std::any_cast<std::string>(leftVal);
-
         std::string r = (rightVal.type() == typeid(char))
                         ? std::string(1, std::any_cast<char>(rightVal))
                         : std::any_cast<std::string>(rightVal);
-
         switch (operation) {
             case Operations::PLUS:
                 return l + r;
@@ -65,6 +99,42 @@ std::any BinaryNode::evaluate(Context& context) {
 }
 
 bool BinaryNode::isExpressionType(Type type) {
-    const bool res = checkExpressionType(left, type);
-    return res && checkExpressionType(right, type);
+    //const bool res = checkExpressionType(left, type);
+    //return res && checkExpressionType(right, type);
+    switch (operation)
+    {
+    case Operations::PLUS:
+        if (checkExpressionType(left, Type::STRING) && checkExpressionType(right, Type::STRING))
+            return type == Type::STRING;
+        else if (checkExpressionType(left, Type::INT) && checkExpressionType(right, Type::INT))
+            return type == Type::INT;
+        break;
+
+    case Operations::MINUS:
+    case Operations::MULTIPLY:
+    case Operations::DIVISION:
+        if (checkExpressionType(left, Type::INT) && checkExpressionType(right, Type::INT))
+            return type == Type::INT;
+        break;
+
+    case Operations::EQUAL:
+    case Operations::NOTEQUAL:
+    case Operations::MIN:
+    case Operations::MAX:
+    case Operations::MINEQUAL:
+    case Operations::MAXEQUAL:
+        if (checkExpressionType(left, Type::INT) && checkExpressionType(right, Type::INT)) return type == Type::BOOLEAN;
+        if (checkExpressionType(left, Type::CHAR) && checkExpressionType(right, Type::CHAR)) return type == Type::BOOLEAN;
+        if (checkExpressionType(left, Type::BOOLEAN) && checkExpressionType(right, Type::BOOLEAN)) return type == Type::BOOLEAN;
+        if (checkExpressionType(left, Type::STRING) && checkExpressionType(right, Type::STRING)) return type == Type::BOOLEAN;
+        break;
+
+    case Operations::AND:
+    case Operations::OR:
+        if (checkExpressionType(left, Type::BOOLEAN) && checkExpressionType(right, Type::BOOLEAN))
+            return type == Type::BOOLEAN;
+        break;
+    }
+
+    return false;
 }

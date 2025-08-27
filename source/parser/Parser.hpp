@@ -22,8 +22,13 @@ private:
     std::vector<Node*> statement_list();
     Node* statement();
     Node* expression();
+    Node* orExpression();
+    Node* andExpression();
+    Node* equality();
+    Node* relational();
     Node* addSub();
     Node* mulMiv();
+    Node* unary();
     Node* factor();
     Node* declaration(const std::string& type, const std::string& name);
     Node* reassigment();

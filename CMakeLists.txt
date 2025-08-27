@@ -22,5 +22,6 @@ add_executable(remlang ${SOURCE_FILES}
         source/parser/ast/Context.hpp
         source/parser/ast/StringLiteral.hpp
         source/parser/ast/BoolLiteral.hpp
+        source/parser/ast/UnaryNode.hpp
 )
 target_link_libraries(remlang PRIVATE fmt::fmt)

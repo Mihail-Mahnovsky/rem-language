@@ -1,4 +1,5 @@
-str h = "str" + "rrr";
-str j = "das";
-char chr = 'F';
-print chr + h + "gondon" + j + chr;
+int x = 6;
+int y = 5;
+str hl = "test";
+boolean test = x >= y and x != 6;
+print !test;

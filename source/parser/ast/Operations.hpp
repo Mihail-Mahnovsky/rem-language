@@ -6,6 +6,16 @@ enum class Operations {
     MINUS,
     MULTIPLY,
     DIVISION,
+
+    OR,
+    AND,
+
+    EQUAL,
+    NOTEQUAL,
+    MIN,
+    MAX,
+    MINEQUAL,
+    MAXEQUAL,
 };
 
 #endif

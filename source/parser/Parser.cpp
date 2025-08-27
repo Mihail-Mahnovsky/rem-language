@@ -9,6 +9,7 @@
 #include "ast/Variable.hpp"
 #include "../utils.hpp"
 #include "ast/CharLiteral.hpp"
+#include "ast/UnaryNode.hpp"
 #include "fmt/base.h"
 
 Parser::Parser() :pos(0),tokens{} {}
@@ -64,7 +65,55 @@ Node* Parser::statement() {
 }
 
 Node* Parser::expression() {
-    return addSub();
+    return orExpression();
+}
+
+Node* Parser::orExpression(){
+    Node* node = andExpression();
+    while (current().getValue() == "or"){
+        eat(TokenType::OR);
+        Node* right = andExpression();
+        node = new BinaryNode(node, right,Operations::OR);
+    }
+    return node;
+}
+
+Node* Parser::andExpression(){
+    Node* node = equality();
+    while (current().getValue() == "and"){
+        eat(TokenType::AND);
+        Node* right = equality();
+        node = new BinaryNode(node, right,Operations::AND);
+    }
+    return node;
+}
+
+Node* Parser::equality(){
+    Node* node = relational();
+    while (current().getValue() == "==" || current().getValue() == "!="){
+        Token op = current();
+        eat(op.getType());
+        Node* right = relational();
+
+        Operations oper = (op.getValue() == "==") ? Operations::EQUAL : Operations::NOTEQUAL;
+        node = new BinaryNode(node,right,oper);
+    }
+    return node;
+}
+
+Node* Parser::relational(){
+    Node* node = addSub();
+    while (current().getValue() == "<" || current().getValue() == ">" || current().getValue() == "<=" || current().getValue() == ">=") {
+        Token op = current();
+        eat(op.getType());
+        Node* right = addSub();
+
+        if (op.getValue() == "<"){node = new BinaryNode(node,right,Operations::MIN);}
+        else if (op.getValue() == ">"){node = new BinaryNode(node,right,Operations::MAX);}
+        else if (op.getValue() == "<="){ node = new BinaryNode(node,right,Operations::MINEQUAL); }
+        else if (op.getValue() == ">="){node = new BinaryNode(node,right,Operations::MAXEQUAL);}
+    }
+    return node;
 }
 
 Node *Parser::addSub() {
@@ -81,17 +130,31 @@ Node *Parser::addSub() {
 }
 
 Node *Parser::mulMiv() {
-    Node* node = factor();
+    Node* node = unary();
     while (current().getValue() == "*" || current().getValue() == "/") {
         Token op = current();
         eat(op.getType());
-        Node* right = factor();
+        Node* right = unary();
 
         Operations oper = (op.getValue() == "*") ? Operations::MULTIPLY : Operations::DIVISION;
         node = new BinaryNode(node,right,oper);
     }
     return node;
 }
+
+Node* Parser::unary(){
+    if (current().getValue() == "-" || current().getValue() == "!") {
+        Token op = current();
+        eat(op.getType());
+        Node* right = unary();
+
+        auto oper = (op.getValue() == "-") ? UnaryOperation::NEGATE : UnaryOperation::NOT;
+        return new UnaryNode(oper, right);
+    }
+
+    return factor();
+}
+
 
 Node *Parser::factor() {
     Token tok = current();

@@ -16,16 +16,14 @@ enum class TokenType {
 
     ID,
 
+    OR,
+    AND,
+
     NUMBER,
     STRING,
     CHARACTER,
 
     TYPE,
-
-    INT_TYPE,
-    STRING_TYPE,
-    CHAR_TYPE,
-    BOOLEAN_TYPE,
 
     TRUE,
     FALSE,

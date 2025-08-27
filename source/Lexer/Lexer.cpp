@@ -34,7 +34,20 @@ std::vector<Token> Lexer::tokeNize(std::string line) {
                 tokens.push_back(Token(TokenType::COMMA,","));
                 break;
             case '=':
-                tokens.push_back(Token(TokenType::ASSIGN, "="));
+                if (peek(line,'=',std::distance(line.begin(), it) + 1)){tokens.push_back(Token(TokenType::OPERATOR, "==")); ++it;}
+                else {tokens.push_back(Token(TokenType::ASSIGN, "="));}
+                break;
+            case '!':
+                if (peek(line,'=',std::distance(line.begin(), it) + 1)){tokens.push_back(Token(TokenType::OPERATOR, "!=")); ++it;}
+                else {tokens.push_back(Token(TokenType::OPERATOR, "!"));}
+                break;
+            case '<':
+                if (peek(line,'=',std::distance(line.begin(), it) + 1)){tokens.push_back(Token(TokenType::OPERATOR, "<=")); ++it;}
+                else {tokens.push_back(Token(TokenType::OPERATOR, "<"));}
+                break;
+            case '>':
+                if (peek(line,'=',std::distance(line.begin(), it) + 1)){tokens.push_back(Token(TokenType::OPERATOR, ">=")); ++it;}
+                else {tokens.push_back(Token(TokenType::OPERATOR, ">"));}
                 break;
             case '(':
                 tokens.push_back(Token(TokenType::LPAREN, "("));
@@ -68,6 +81,8 @@ std::vector<Token> Lexer::tokeNize(std::string line) {
                     else if (res == "boolean") {tokens.push_back(Token(TokenType::TYPE, res));}
                     else if (res == "str") {tokens.push_back(Token(TokenType::TYPE, res));}
                     else if (res == "char") {tokens.push_back(Token(TokenType::TYPE, res));}
+                    else if (res == "or") { tokens.push_back(Token(TokenType::OR, res));}
+                    else if (res == "and") { tokens.push_back(Token(TokenType::AND, res));}
                     else { tokens.push_back(Token(TokenType::ID, res)); }
                 }
                 else if (*it == '\"') {
