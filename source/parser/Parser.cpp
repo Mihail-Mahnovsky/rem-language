@@ -1,5 +1,7 @@
 #include "Parser.hpp"
 
+#include <bits/fs_fwd.h>
+
 #include "ast/Assign.hpp"
 #include "ast/Echo.hpp"
 #include "ast/BinaryNode.hpp"
@@ -9,6 +11,8 @@
 #include "ast/Variable.hpp"
 #include "../utils.hpp"
 #include "ast/CharLiteral.hpp"
+#include "ast/IfNode.hpp"
+#include "ast/Scope.hpp"
 #include "ast/UnaryNode.hpp"
 #include "fmt/base.h"
 
@@ -28,7 +32,7 @@ std::vector<Node*> Parser::statement_list() {
             break;
         }
         nodes.push_back(statement());
-        eat(TokenType::SEMICOLON);
+        //eat(TokenType::SEMICOLON);
     }
 
     return nodes;
@@ -56,6 +60,8 @@ Node* Parser::statement() {
         case TokenType::PRINT:
             eat(TokenType::PRINT);
             return new Echo(expression());
+        case TokenType::IF:
+            return parseIf();
          default:
             return expression();
             break;
@@ -231,6 +237,46 @@ Node *Parser::reassigment() {
     }
     int offset = offsets[name];
     return new Assign(offset, right);
+}
+
+std::vector<Node*> Parser::parseScope(){
+    eat(TokenType::LBRACE);
+    std::vector<Node*> nodes = statement_list();
+    eat(TokenType::RBRACE);
+    return nodes;
+}
+
+
+Node* Parser::parseIf(){
+    std::vector<Block> blocks;
+    eat(TokenType::IF);
+    eat(TokenType::LPAREN);
+    Node* condition = expression();
+    eat(TokenType::RPAREN);
+    Scope* scope = new Scope(parseScope());
+    blocks.push_back(Block(condition,scope));
+
+    while (current().getType() == TokenType::ELIF || current().getType() == TokenType::ELSE){
+        switch (current().getType()){
+            case TokenType::ELIF:{
+                eat(TokenType::ELIF);
+                eat(TokenType::LPAREN);
+                Node* condition = expression();
+                eat(TokenType::RPAREN);
+                Scope* scope = new Scope(parseScope());
+                blocks.push_back(Block(condition,scope));
+                break;
+            }
+            case TokenType::ELSE:{
+                eat(TokenType::ELSE);
+                scope = new Scope(parseScope());
+                blocks.push_back(Block(nullptr,scope));
+                break;
+            }
+        }
+    }
+
+    return new IfNode(blocks);
 }
 
 

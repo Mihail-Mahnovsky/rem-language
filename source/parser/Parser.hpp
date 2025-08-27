@@ -32,6 +32,8 @@ private:
     Node* factor();
     Node* declaration(const std::string& type, const std::string& name);
     Node* reassigment();
+    Node* parseIf();
+    std::vector<Node*> parseScope();
 public:
     Parser();
     std::vector<Node*> parse(std::vector<Token>& tokens);

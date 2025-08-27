@@ -1,5 +1,10 @@
-int x = 6;
-int y = 5;
-str hl = "test";
-boolean test = x >= y and x != 6 or 2 == 2;
-print hl == "test";
+int x = 4
+if (2 != 2 and 7 == 7){
+    print "tr"
+}
+elif (2 + 3 == 5 or x == 4){
+    print "real"
+}
+else {
+    print "fal"
+}

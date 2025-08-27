@@ -10,7 +10,10 @@ private:
 public:
     Scope(std::vector<Node*> nodes) :nodes(nodes) {};
     std::any evaluate(Context& context) override {
-        return std::any();
+        for (auto node : nodes){
+            node->evaluate(context);
+        }
+        return {};
     }
 };
 

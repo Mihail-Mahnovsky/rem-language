@@ -19,6 +19,10 @@ enum class TokenType {
     OR,
     AND,
 
+    IF,
+    ELIF,
+    ELSE,
+
     NUMBER,
     STRING,
     CHARACTER,
