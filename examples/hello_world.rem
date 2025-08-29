@@ -1,6 +1,14 @@
-int index = 0
-boolean a = true
-while(index <= 10 and a){
-    print index
-    index = index + 1
+
+int g(){
+    return 2
 }
+
+int t(){
+    return 2
+}
+
+int add(int a,int b){
+    return a + b
+}
+
+print add(g(),t())

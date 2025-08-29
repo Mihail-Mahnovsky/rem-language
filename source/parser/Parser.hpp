@@ -34,7 +34,10 @@ private:
     Node* reassigment();
     Node* parseIf();
     Node* parseWhile();
+    Node* parseFunction(std::string& type,std::string name);
     std::vector<Node*> parseScope();
+    Node* parseFuction(std::string& type,std::string name);
+    Node* parseFunctionCall(std::string& name);
 public:
     Parser();
     std::vector<Node*> parse(std::vector<Token>& tokens);

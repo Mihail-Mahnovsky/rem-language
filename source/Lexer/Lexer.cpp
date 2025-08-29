@@ -83,6 +83,7 @@ std::vector<Token> Lexer::tokeNize(std::string line) {
                     if (res == "print") { tokens.push_back(Token(TokenType::PRINT, res)); }
                     else if (res == "true") {tokens.push_back(Token(TokenType::TRUE, res)); }
                     else if (res == "false") {tokens.push_back(Token(TokenType::FALSE, res)); }
+                    else if (res == "void") {tokens.push_back(Token(TokenType::TYPE, res));}
                     else if (res == "int") {tokens.push_back(Token(TokenType::TYPE,res));}
                     else if (res == "boolean") {tokens.push_back(Token(TokenType::TYPE, res));}
                     else if (res == "str") {tokens.push_back(Token(TokenType::TYPE, res));}
@@ -93,6 +94,7 @@ std::vector<Token> Lexer::tokeNize(std::string line) {
                     else if (res == "else") { tokens.push_back(Token(TokenType::ELSE, res));}
                     else if (res == "elif") {tokens.push_back(Token(TokenType::ELIF, res));}
                     else if (res == "while") {tokens.push_back(Token(TokenType::WHILE, res));}
+                    else if (res == "return") { tokens.push_back(Token(TokenType::RETURN, res)); }
                     else { tokens.push_back(Token(TokenType::ID, res)); }
                 }
                 else if (*it == '\"') {

@@ -1,6 +1,8 @@
 #include "Parser.hpp"
 
 #include <bits/fs_fwd.h>
+#include <iostream>
+
 
 #include "ast/Assign.hpp"
 #include "ast/Echo.hpp"
@@ -9,12 +11,14 @@
 #include "ast/BoolLiteral.hpp"
 #include "ast/StringLiteral.hpp"
 #include "ast/Variable.hpp"
-#include "../utils.hpp"
+#include "ast/FunctionHeaderNode.hpp"
 #include "ast/CharLiteral.hpp"
 #include "ast/IfNode.hpp"
+#include "ast/ReturnNode.hpp"
 #include "ast/Scope.hpp"
 #include "ast/UnaryNode.hpp"
 #include "ast/while.hpp"
+#include "ast/FunctionCall.hpp"
 
 Parser::Parser() :pos(0),tokens{} {}
 
@@ -32,7 +36,6 @@ std::vector<Node*> Parser::statement_list() {
             break;
         }
         nodes.push_back(statement());
-        //eat(TokenType::SEMICOLON);
     }
 
     return nodes;
@@ -50,13 +53,25 @@ Node* Parser::statement() {
                 eat(TokenType::ID);
                 if (current().getType() == TokenType::ASSIGN){
                     return declaration(type, name);
-                }//тут еще будет обработка фуункцый
-            }
+                }else if (current().getType() == TokenType::LPAREN){
+                    eat(TokenType::LPAREN);
+                    return parseFuction(type, name);
+                    }
+                }
             break;
-        case TokenType::ID:
-            if (peek(TokenType::ASSIGN)){
-                return reassigment();
+        case TokenType::RETURN:
+            eat(TokenType::RETURN);
+            return new ReturnNode(expression());
+        case TokenType::ID:{
+                if (peek(TokenType::ASSIGN)){
+                    return reassigment();
+                }
+                if (peek(TokenType::LPAREN)){
+                    std::string name = current().getValue();
+                    return parseFunctionCall(name);
+                }
             }
+
         case TokenType::WHILE:
             return parseWhile();
         case TokenType::PRINT:
@@ -69,8 +84,27 @@ Node* Parser::statement() {
             break;
     }
 
-    throw std::runtime_error("Unexpected token");
+    throw std::runtime_error("Uneewxpected token");
 }
+
+Node* Parser::parseFunctionCall(std::string& name)
+{
+    eat(TokenType::LPAREN);
+    std::vector<Node*> args;
+    int i = 0;
+    while (current().getType() != TokenType::RPAREN) {
+        args.push_back(expression());
+        if (current().getType() == TokenType::RPAREN){
+            eat(TokenType::RPAREN);
+            ++i;
+            break;
+        }
+        else {eat(TokenType::COMMA);}
+    } if (i == 0 && current().getType() == TokenType::RPAREN){eat(TokenType::RPAREN);}
+
+    return new FunctionCall(name,args);
+}
+
 
 Node* Parser::expression() {
     return orExpression();
@@ -186,9 +220,12 @@ Node *Parser::factor() {
         case TokenType::ID:{
                 std::string name = tok.getValue();
                 eat(TokenType::ID);
-                if (offsets.find(name) == offsets.end()) {
-                    throw std::runtime_error("not find this variable : " + name);
+                if (current().getType() == TokenType::LPAREN){
+                    return parseFunctionCall(name);
                 }
+                //if (offsets.find(name) == offsets.end()) {
+                 //   throw std::runtime_error("not find this variable : " + name);
+                //}
                 return new Variable(offsets[name],types[name]);
         }
         case TokenType::LPAREN: {
@@ -290,7 +327,52 @@ Node* Parser::parseWhile(){
     return new While(condition,scope);
 }
 
+Type stringToType(std::string type){
+    if (type == "int") { return Type::INT; }
+    else if (type == "str") { return Type::STRING; }
+    else if (type == "char") { return Type::CHAR; }
+    else if (type == "boolean") { return Type::BOOLEAN; }
+    else if (type == "void") { return Type::VOID; }
+    throw std::runtime_error("Unsupported type: " + type);
+}
 
+Node* Parser::parseFuction(std::string& type,std::string name){
+    if (type == "int") { types[name] = Type::INT; }
+    else if (type == "str") { types[name] = Type::STRING; }
+    else if (type == "char") { types[name] = Type::CHAR; }
+    else if (type == "boolean") { types[name] = Type::BOOLEAN; }
+    else if (type == "void") { types[name] = Type::VOID; }
+
+    std::vector<Arg> args;
+
+    while (current().getType() != TokenType::RPAREN){
+        Type type = stringToType(current().getValue());
+        eat(TokenType::TYPE);
+        std::string argName = current().getValue();
+        eat(TokenType::ID);
+
+        offsets[name] = currentOffset;
+        int argOffSet = currentOffset;
+        ++currentOffset;
+        args.push_back(Arg(type,argName,argOffSet));
+        if (current().getType() == TokenType::RPAREN){
+            eat(TokenType::RPAREN);
+            break;
+        }
+        else {eat(TokenType::COMMA);}
+    }
+    if (current().getType() == TokenType::RPAREN){ eat(TokenType::RPAREN); }
+
+    Scope* scope = new Scope(parseScope());
+
+    if (types[name] != Type::VOID && scope->getReturn() != nullptr){
+        if (!checkExpressionType(dynamic_cast<ReturnNode*>(scope->getReturn())->getReturnValue(), types[name])){
+            std::cerr << "error: type mismatch in function creating ret val and type not eqvial " << name << std::endl;
+        }
+    }
+
+    return new FunctionHeaderNode(name,scope,args);
+}
 
 bool Parser::peek(TokenType wantType) {
     if (pos < tokens.size() && tokens[pos + 1].getType() == wantType) {

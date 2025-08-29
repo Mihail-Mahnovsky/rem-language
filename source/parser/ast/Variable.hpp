@@ -2,7 +2,7 @@
 #define REMLANG_VARIABLE_HPP
 
 #include "Node.hpp"
-#include "../types.hpp";
+#include "../types.hpp"
 
 class Variable : public Node {
 private:

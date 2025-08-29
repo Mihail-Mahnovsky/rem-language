@@ -17,4 +17,9 @@ add_executable(remlang ${SOURCE_FILES}
         source/parser/ast/IfNode.hpp
         source/parser/ast/while.hpp
         source/parser/ast/while.cpp
+        source/parser/ast/FunctionHeaderNode.hpp
+        source/parser/ast/ReturnNode.hpp
+        source/parser/ast/FunctionCall.hpp
+        source/parser/ast/FunctionHeaderNode.cpp
+        source/utils.cpp
 )

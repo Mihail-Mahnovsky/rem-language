@@ -21,6 +21,8 @@ public:
             case UnaryOperation::NEGATE:
                 return -std::any_cast<double>(std::any_cast<double>(right->evaluate(context)));
         }
+
+        return {};
     }
 };
 

@@ -23,6 +23,7 @@ enum class TokenType {
     ELIF,
     ELSE,
     WHILE,
+    RETURN,
 
     NUMBER,
     STRING,

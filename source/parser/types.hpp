@@ -6,6 +6,7 @@ enum class Type{
     BOOLEAN,
     STRING,
     CHAR,
+    VOID,
 };
 
 #endif
