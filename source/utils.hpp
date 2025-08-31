@@ -5,12 +5,11 @@
 #include "parser/ast/StringLiteral.hpp"
 #include "parser/ast/BoolLiteral.hpp"
 #include "parser/ast/CharLiteral.hpp"
-#include "parser/ast/FunctionCall.hpp"
 #include "parser/ast/Variable.hpp"
 
 class FunctionCall;
 
 bool checkExpressionType(Node* expression, Type type);
-Type chechExprType(Node* expression);
+Type checkExprType(Node* expression);
 
 #endif

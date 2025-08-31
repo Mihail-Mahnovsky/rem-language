@@ -20,7 +20,7 @@
 #include "ast/while.hpp"
 #include "ast/FunctionCall.hpp"
 
-Parser::Parser() :pos(0),tokens{} {}
+Parser::Parser() :pos(0),tokens{},currentOffset(0) {}
 
 std::vector<Node*> Parser::parse(std::vector<Token>& tokens) {
     pos = 0;
@@ -68,15 +68,13 @@ Node* Parser::statement() {
                 }
                 if (peek(TokenType::LPAREN)){
                     std::string name = current().getValue();
+                    eat(TokenType::ID);
                     return parseFunctionCall(name);
                 }
             }
 
         case TokenType::WHILE:
             return parseWhile();
-        case TokenType::PRINT:
-            eat(TokenType::PRINT);
-            return new Echo(expression());
         case TokenType::IF:
             return parseIf();
          default:
@@ -252,10 +250,10 @@ Node *Parser::declaration(const std::string& type, const std::string& name) {
     eat(TokenType::ASSIGN);
     Node* right = expression();
 
-    if (!checkExpressionType(right, types[name])) {
-        std::cerr << "error: type mismatch in declaration of " << name << std::endl;
-        exit(1);
-    }
+//    if (!checkExpressionType(right, types[name])) {
+  //      std::cerr << "error: type mismatch in declaration of " << name << std::endl;
+  //     exit(1);
+   // }
 
     return new Assign(assignedOffset,right);
 }

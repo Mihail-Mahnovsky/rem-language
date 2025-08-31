@@ -1,5 +1,7 @@
 #include "utils.hpp"
 
+#include "parser/ast/FunctionCall.hpp"
+
 bool checkExpressionType(Node* expression, Type type){
     if (!expression) return false;
     else if ( dynamic_cast<NumberLiteral*>(expression) != nullptr ) {
@@ -32,7 +34,7 @@ bool checkExpressionType(Node* expression, Type type){
     return false;
 }
 
-Type chechExprType(Node* expression){
+Type checkExprType(Node* expression){
 if (!expression) return Type::VOID;
 else if ( dynamic_cast<NumberLiteral*>(expression) != nullptr ) {
     return Type::INT;
@@ -54,7 +56,7 @@ else if (auto var = dynamic_cast<Variable*>(expression)) {
 }
 
 else if (auto* bin = dynamic_cast<BinaryNode*>(expression) ) {
-    return chechExprType(bin);
+    return checkExprType(bin);
 }
 
 else if (auto func = dynamic_cast<FunctionCall*>(expression) ) {

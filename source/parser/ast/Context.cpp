@@ -1,8 +1,15 @@
 #include "Context.hpp"
 
+#include <functional>
+
+#include "../../stdlib.hpp"
+
 #include <stdexcept>
 
-Context::Context() :stack{},frameStack{} {}
+Context::Context() :stack{},frameStack{} {
+    functions["println"] = println;
+    functions["scan"] = scan;
+}
 
 Context::~Context(){
     stack.clear();
@@ -17,6 +24,9 @@ std::any Context::get(int offSet){
 
 void Context::set(int offSet, const std::any& val) {
     if (offSet >= stack.size()) {
+        if (offSet > 100000) {
+            throw std::runtime_error("Offset too large: possible logic error");
+        }
         stack.resize(offSet + 1);
     }
     stack[offSet] = val;

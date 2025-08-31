@@ -1,14 +1,20 @@
 
-int g(){
-    return 2
+void func() {
+    println("enter p or m for 2&2 : ")
+    boolean isend = false
+    str input = scan()
+    while (!isend){
+        if (input == "p"){
+            println(2+2)
+            isend = true
+        }elif (input == "m" ) {
+            println(2-1)
+            isend = true
+        }
+        else {
+            println("dont support operation")
+        }
+    }
 }
 
-int t(){
-    return 2
-}
-
-int add(int a,int b){
-    return a + b
-}
-
-print add(g(),t())
+func()

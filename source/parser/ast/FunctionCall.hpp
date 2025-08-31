@@ -10,7 +10,6 @@
 
 #include "FunctionHeaderNode.hpp"
 #include "../../utils.hpp"
-#include "../../utils.hpp"
 
 #include "../../utils.hpp"
 
@@ -20,28 +19,36 @@ private:
     std::vector<Node*> args;
     Scope* scope;
 public:
-    FunctionCall(std::string& name, std::vector<Node*> args) : name(name), args(args) {};
+    FunctionCall(std::string& name, std::vector<Node*>& args) : name(name), args(args) {};
     std::any evaluate(Context& context) override{
-        FunctionHeaderNode* header = context.getUserFunction(name);
-        scope = header->getScope();
 
-        std::vector<Arg> hArgs = header->getArgs();
-        for (int i = 0; i < hArgs.size(); ++i){
-            if (!checkExpressionType(args[i],hArgs[i].getType())){
-                throw std::invalid_argument("arugment type not eqvial(frim func call)");
-            }else{
-                context.set(hArgs[i].getOffset(),args[i]->evaluate(context));
+        if (context.isHave(name)) {
+            std::vector<std::any> aargs;
+            for (Node* arg : args) {
+                aargs.push_back(arg->evaluate(context));
             }
+            return context.callFunction(name,aargs);
+        }else {
+            FunctionHeaderNode* header = context.getUserFunction(name);
+            scope = header->getScope();
+
+            std::vector<Arg> hArgs = header->getArgs();
+            for (int i = 0; i < hArgs.size(); ++i){
+                //if (!checkExpressionType(args[i],hArgs[i].getType())){
+                //    throw std::invalid_argument("arugment type not eqvial(frim func call)");
+                //}else{
+                context.set(hArgs[i].getOffset(),args[i]->evaluate(context));
+                //}
+            }
+
+            std::any result = scope->evaluate(context);
+            delete header;
+            return result;
         }
-
-        return scope->evaluate(context);
-
-        delete header;
-        return {};
     }
 
     Type getType(){
-        return chechExprType(scope->getReturn());
+        return checkExprType(scope->getReturn());
     }
 };
 

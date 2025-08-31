@@ -80,8 +80,7 @@ std::vector<Token> Lexer::tokeNize(std::string line) {
                         ++it;
                     }
                     --it;
-                    if (res == "print") { tokens.push_back(Token(TokenType::PRINT, res)); }
-                    else if (res == "true") {tokens.push_back(Token(TokenType::TRUE, res)); }
+                    if (res == "true") {tokens.push_back(Token(TokenType::TRUE, res)); }
                     else if (res == "false") {tokens.push_back(Token(TokenType::FALSE, res)); }
                     else if (res == "void") {tokens.push_back(Token(TokenType::TYPE, res));}
                     else if (res == "int") {tokens.push_back(Token(TokenType::TYPE,res));}
@@ -101,7 +100,7 @@ std::vector<Token> Lexer::tokeNize(std::string line) {
                     ++it;
                     std::string res = std::string(1,*it);
                     ++it;
-                    while (isalpha(*it) && it != line.end()) {
+                    while ((*it) != '\"' && it != line.end()) {
                         res += *it;
                         ++it;
                     }
