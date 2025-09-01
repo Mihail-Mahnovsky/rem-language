@@ -1,14 +1,15 @@
 
-void func() {
-    println("enter p or m for 2&2 : ")
+void func(str massage,int one,int two) {
+    println(message)
     boolean isend = false
-    str input = scan()
+    str input = "void"
     while (!isend){
+        input = scan()
         if (input == "p"){
-            println(2+2)
+            println(one+two)
             isend = true
         }elif (input == "m" ) {
-            println(2-1)
+            println(one-two)
             isend = true
         }
         else {
@@ -17,4 +18,4 @@ void func() {
     }
 }
 
-func()
+func("enter p or m for 2&2 : " , 2,2)

@@ -19,7 +19,7 @@ private:
     std::string name;
     unsigned int offset;
 public:
-    Arg(Type type,std::string name,unsigned int offset) : type(type), name(name), offset(offset) {}
+    Arg(Type type,std::string name,unsigned int ooffset) : type(type), name(name), offset(ooffset) {}
     Type getType(){return type;}
     std::string getName(){return name;}
     unsigned int getOffset(){return offset;}

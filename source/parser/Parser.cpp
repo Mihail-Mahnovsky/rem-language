@@ -269,9 +269,9 @@ Node *Parser::reassigment() {
     eat(TokenType::ASSIGN);
 
     Node* right = expression();
-    if (!checkExpressionType(right, types[name])) {
-        std::cerr << "error: type mismatch in declaration of " << name << std::endl;
-    }
+    //if (!checkExpressionType(right, types[name])) {
+      //  std::cerr << "error: type mismatch in declaration of " << name << std::endl;
+    //}
     int offset = offsets[name];
     return new Assign(offset, right);
 }
