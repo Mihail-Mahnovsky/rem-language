@@ -10,7 +10,10 @@ class Scope : public Node {
 private:
     std::vector<Node*> nodes;
 public:
-    Scope(std::vector<Node*> nodes) :nodes(nodes) {};
+    Scope(std::vector<Node*> nodes)
+        :nodes(std::move(nodes))
+    {}
+
     std::any evaluate(Context& context) override {
         context.pushNewFrame();
         for (auto node : nodes){
@@ -22,7 +25,8 @@ public:
         context.popFrame();
         return {};
     }
-    Node* getReturn(){
+
+    Node* getReturn() const {
         for (auto node : nodes){
             if (ReturnNode* ret = dynamic_cast<ReturnNode*>(node)){
                 return ret;

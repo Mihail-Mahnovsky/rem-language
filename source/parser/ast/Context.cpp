@@ -6,9 +6,12 @@
 
 #include <stdexcept>
 
-Context::Context() :stack{},frameStack{} {
-    functions["println"] = println;
-    functions["scan"] = scan;
+Context::Context()
+    : stack{}
+    , frameStack{}
+{
+    functions["println"] = { println, Type::VOID };
+    functions["scan"] = { scan, Type::STRING };
 }
 
 Context::~Context(){

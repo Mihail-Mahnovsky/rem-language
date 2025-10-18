@@ -20,7 +20,14 @@
 #include "ast/while.hpp"
 #include "ast/FunctionCall.hpp"
 
-Parser::Parser() :pos(0),tokens{},currentOffset(0) {}
+Parser::Parser(Context& ctx)
+    : pos(0)
+    , tokens()
+    , offsets()
+    , types()
+    , currentOffset(0)
+    , context(ctx)
+{}
 
 std::vector<Node*> Parser::parse(std::vector<Token>& tokens) {
     pos = 0;
@@ -100,7 +107,7 @@ Node* Parser::parseFunctionCall(std::string& name)
         else {eat(TokenType::COMMA);}
     } if (i == 0 && current().getType() == TokenType::RPAREN){eat(TokenType::RPAREN);}
 
-    return new FunctionCall(name,args);
+    return new FunctionCall(context, name,args);
 }
 
 
@@ -221,9 +228,9 @@ Node *Parser::factor() {
                 if (current().getType() == TokenType::LPAREN){
                     return parseFunctionCall(name);
                 }
-                //if (offsets.find(name) == offsets.end()) {
-                 //   throw std::runtime_error("not find this variable : " + name);
-                //}
+              //  if (offsets.find(name) == offsets.end()) {
+               //     throw std::runtime_error("not find this variable : " + name);
+               // }
                 return new Variable(offsets[name],types[name]);
         }
         case TokenType::LPAREN: {
@@ -250,10 +257,10 @@ Node *Parser::declaration(const std::string& type, const std::string& name) {
     eat(TokenType::ASSIGN);
     Node* right = expression();
 
-//    if (!checkExpressionType(right, types[name])) {
-  //      std::cerr << "error: type mismatch in declaration of " << name << std::endl;
-  //     exit(1);
-   // }
+    if (!checkExpressionType(right, types[name])) {
+        std::cerr << "error: type mismatch in declaration of " << name << std::endl;
+       exit(1);
+    }
 
     return new Assign(assignedOffset,right);
 }
@@ -262,16 +269,16 @@ Node *Parser::reassigment() {
     std::string name = current().getValue();
     eat(TokenType::ID);
 
-    if (offsets.find(name) == offsets.end()) {
-        throw std::runtime_error("don`t find this variable : " + name);
-    }
+   // if (offsets.find(name) == offsets.end()) {
+    //    throw std::runtime_error("don`t find this variable : " + name);
+   // }
 
     eat(TokenType::ASSIGN);
 
     Node* right = expression();
-    //if (!checkExpressionType(right, types[name])) {
-      //  std::cerr << "error: type mismatch in declaration of " << name << std::endl;
-    //}
+    if (!checkExpressionType(right, types[name])) {
+        std::cerr << "error: type mismatch in declaration of " << name << std::endl;
+    }
     int offset = offsets[name];
     return new Assign(offset, right);
 }
@@ -335,11 +342,7 @@ Type stringToType(std::string type){
 }
 
 Node* Parser::parseFuction(std::string& type,std::string name){
-    if (type == "int") { types[name] = Type::INT; }
-    else if (type == "str") { types[name] = Type::STRING; }
-    else if (type == "char") { types[name] = Type::CHAR; }
-    else if (type == "boolean") { types[name] = Type::BOOLEAN; }
-    else if (type == "void") { types[name] = Type::VOID; }
+    types[name] = stringToType(type);
 
     std::vector<Arg> args;
 
@@ -349,7 +352,7 @@ Node* Parser::parseFuction(std::string& type,std::string name){
         std::string argName = current().getValue();
         eat(TokenType::ID);
 
-        offsets[name] = currentOffset;
+        offsets[argName] = currentOffset;
         int argOffSet = currentOffset;
         ++currentOffset;
         args.push_back(Arg(type,argName,argOffSet));

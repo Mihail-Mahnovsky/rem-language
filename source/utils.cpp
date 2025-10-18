@@ -2,66 +2,40 @@
 
 #include "parser/ast/FunctionCall.hpp"
 
-bool checkExpressionType(Node* expression, Type type){
-    if (!expression) return false;
-    else if ( dynamic_cast<NumberLiteral*>(expression) != nullptr ) {
-        return type == Type::INT;
+bool checkExpressionType(Node* expression, Type type) {
+    return checkExprType(expression) == type;
+}
+
+Type checkExprType(Node* expression) {
+    if (!expression) return Type::VOID;
+
+    if ( dynamic_cast<NumberLiteral*>(expression) != nullptr ) {
+        return Type::INT;
     }
 
-    else if ( dynamic_cast<StringLiteral*>(expression) != nullptr ) {
-        return type == Type::STRING;
+    if ( dynamic_cast<StringLiteral*>(expression) != nullptr ) {
+        return Type::STRING;
     }
 
-    else if (dynamic_cast<BooleanLiteral*>(expression) != nullptr) {
-        return type == Type::BOOLEAN;
-    }
-    else if (dynamic_cast<CharLiteral*>(expression) != nullptr) {
-        return type == Type::CHAR;
+    if (dynamic_cast<BooleanLiteral*>(expression) != nullptr) {
+        return Type::BOOLEAN;
     }
 
-    else if (auto var = dynamic_cast<Variable*>(expression)) {
-        return var->getType() == type;
+    if (dynamic_cast<CharLiteral*>(expression) != nullptr) {
+        return Type::CHAR;
     }
 
-    else if (const auto bin = dynamic_cast<BinaryNode*>(expression) ) {
-        return bin->isExpressionType(type);
+    if (auto var = dynamic_cast<Variable*>(expression)) {
+        return var->getType();
     }
 
-    else if (const auto func = dynamic_cast<FunctionCall*>(expression) ) {
-        return func->getType() == type;
+    if (auto* bin = dynamic_cast<BinaryNode*>(expression) ) {
+        return checkExprType(bin);
     }
 
-    return false;
-}
+    if (auto func = dynamic_cast<FunctionCall*>(expression) ) {
+        return func->getType();
+    }
 
-Type checkExprType(Node* expression){
-if (!expression) return Type::VOID;
-else if ( dynamic_cast<NumberLiteral*>(expression) != nullptr ) {
-    return Type::INT;
-}
-
-else if ( dynamic_cast<StringLiteral*>(expression) != nullptr ) {
-    return Type::STRING;
-}
-
-else if (dynamic_cast<BooleanLiteral*>(expression) != nullptr) {
-    return Type::BOOLEAN;
-}
-else if (dynamic_cast<CharLiteral*>(expression) != nullptr) {
-    return Type::CHAR;
-}
-
-else if (auto var = dynamic_cast<Variable*>(expression)) {
-    return var->getType();
-}
-
-else if (auto* bin = dynamic_cast<BinaryNode*>(expression) ) {
-    return checkExprType(bin);
-}
-
-else if (auto func = dynamic_cast<FunctionCall*>(expression) ) {
-    return func->getType();
-}
-
-return Type::VOID;
+    return Type::VOID;
 }

@@ -2,7 +2,7 @@
 void func(str massage,int one,int two) {
     println(message)
     boolean isend = false
-    str input = "void"
+    str input = ""
     while (!isend){
         input = scan()
         if (input == "p"){

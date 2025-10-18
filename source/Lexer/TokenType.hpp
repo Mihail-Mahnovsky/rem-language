@@ -24,6 +24,7 @@ enum class TokenType {
     ELSE,
     WHILE,
     RETURN,
+    BREAK,
 
     NUMBER,
     STRING,
@@ -34,8 +35,6 @@ enum class TokenType {
     TRUE,
     FALSE,
 
-    //for test
-    PRINT
 };
 
 #endif

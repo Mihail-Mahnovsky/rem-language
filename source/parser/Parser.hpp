@@ -15,7 +15,9 @@ private:
     std::unordered_map <std::string, int> offsets;
     std::unordered_map <std::string, Type> types;
     int currentOffset;
+    Context& context;
 
+private:
     bool peek(TokenType wantType);
     void eat(TokenType type);
     Token current() { if (pos < tokens.size()) {return tokens[pos];} else return tokens.back(); };
@@ -39,7 +41,7 @@ private:
     Node* parseFuction(std::string& type,std::string name);
     Node* parseFunctionCall(std::string& name);
 public:
-    Parser();
+    Parser(Context& ctx);
     std::vector<Node*> parse(std::vector<Token>& tokens);
 };
 

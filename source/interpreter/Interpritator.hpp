@@ -13,6 +13,7 @@ public:
     Interpreter();
     ~Interpreter();
     void execute(std::vector<Node*> nodes);
+    Context& getContext() {  return context; }
 };
 
 

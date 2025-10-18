@@ -6,9 +6,11 @@
 #include <fstream>
 
 int main(void) {
-    Lexer lexer = Lexer();
-    Parser parser = Parser();
+
     Interpreter interpreter = Interpreter();
+    Lexer lexer = Lexer();
+    Parser parser = Parser(interpreter.getContext());
+
     std::ifstream inputFile("../examples/hello_world.rem");
     if (inputFile.is_open()) {
         std::string res;

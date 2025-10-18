@@ -8,14 +8,21 @@
 #include <stdexcept>
 #include <unordered_map>
 
+#include "../types.hpp"
+
 class FunctionHeaderNode;
+
+struct FunctionInfo {
+    std::function<std::any(std::vector<std::any>)> function;
+    Type returnType;
+};
 
 class Context{
 private:
     std::vector<std::any> stack;
     std::vector<size_t> frameStack;
     std::unordered_map<std::string, FunctionHeaderNode*> userFunctions;
-    std::unordered_map<std::string, std::function<std::any(std::vector<std::any>)>> functions;
+    std::unordered_map<std::string, FunctionInfo> functions;
 public:
     Context();
     ~Context();
@@ -25,7 +32,7 @@ public:
     std::any callFunction(std::string name, std::vector<std::any> args) {
         auto iter = functions.find(name);
         if (iter != functions.end()) {
-            return iter->second(args);
+            return iter->second.function(args);
         }
         throw std::runtime_error("func not found: " + name);
     }
@@ -37,6 +44,15 @@ public:
     void popFrame();
     std::any get(int offSet);
     void set(int offSet, const std::any& val);
+
+    Type getFunctionType(const std::string& name) const {
+        auto iter = functions.find(name);
+        if (iter != functions.end()) {
+            return iter->second.returnType;
+        }
+
+        return Type::VOID;
+    }
 };
 
 

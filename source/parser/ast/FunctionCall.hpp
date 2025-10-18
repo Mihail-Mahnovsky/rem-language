@@ -13,13 +13,21 @@
 
 #include "../../utils.hpp"
 
-class FunctionCall : public Node{
+class FunctionCall : public Node
+{
 private:
+    Context& contextRef;
     std::string name;
     std::vector<Node*> args;
     Scope* scope;
 public:
-    FunctionCall(std::string& name, std::vector<Node*>& args) : name(name), args(args) {};
+    FunctionCall(Context& context, std::string& name, std::vector<Node*>& args)
+        : contextRef(context)
+        , name(name)
+        , args(args)
+        , scope(nullptr)
+    {}
+
     std::any evaluate(Context& context) override{
 
         if (context.isHave(name)) {
@@ -47,8 +55,11 @@ public:
         }
     }
 
-    Type getType(){
-        return checkExprType(scope->getReturn());
+    Type getType() const {
+        if (scope) {
+            return checkExprType(scope->getReturn());
+        }
+        return contextRef.getFunctionType(name);
     }
 };
 

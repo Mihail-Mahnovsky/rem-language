@@ -94,12 +94,12 @@ std::vector<Token> Lexer::tokeNize(std::string line) {
                     else if (res == "elif") {tokens.push_back(Token(TokenType::ELIF, res));}
                     else if (res == "while") {tokens.push_back(Token(TokenType::WHILE, res));}
                     else if (res == "return") { tokens.push_back(Token(TokenType::RETURN, res)); }
+                    else if (res == "break") { tokens.push_back(Token(TokenType::BREAK, res)); }
                     else { tokens.push_back(Token(TokenType::ID, res)); }
                 }
                 else if (*it == '\"') {
                     ++it;
-                    std::string res = std::string(1,*it);
-                    ++it;
+                    std::string res = "";
                     while ((*it) != '\"' && it != line.end()) {
                         res += *it;
                         ++it;
