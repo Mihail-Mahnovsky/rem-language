@@ -14,26 +14,8 @@ public:
         :nodes(std::move(nodes))
     {}
 
-    std::any evaluate(Context& context) override {
-        context.pushNewFrame();
-        for (auto node : nodes){
-            if (dynamic_cast<ReturnNode*>(node)){
-                return node->evaluate(context);
-            }
-            else { node->evaluate(context); }
-        }
-        context.popFrame();
-        return {};
-    }
-
-    Node* getReturn() const {
-        for (auto node : nodes){
-            if (ReturnNode* ret = dynamic_cast<ReturnNode*>(node)){
-                return ret;
-            }
-        }
-        return nullptr;
-    }
+    std::any evaluate(Context& context) override;
+    Node* getReturn() const;
 };
 
 #endif

@@ -23,4 +23,6 @@ add_executable(remlang ${SOURCE_FILES}
         source/parser/ast/FunctionHeaderNode.cpp
         source/utils.cpp
         source/stdlib.hpp
+        source/parser/ast/FunctionCall.cpp
+        source/parser/ast/Scope.cpp
 )
