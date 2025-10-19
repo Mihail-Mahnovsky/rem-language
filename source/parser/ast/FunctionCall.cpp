@@ -22,7 +22,7 @@ std::any FunctionCall::evaluate(Context& context){
         }
 
         std::any result = scope->evaluate(context);
-        delete header;
+
         return result;
     }
 }

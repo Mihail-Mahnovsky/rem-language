@@ -9,7 +9,11 @@ private:
 public:
     ReturnNode(Node* returnValue) : returnValue(returnValue){};
     std::any evaluate(Context& context) override{
-        return returnValue->evaluate(context);
+        const auto val = returnValue->evaluate(context);
+
+        context.setReturn(val);
+
+        return val;
     }
 
     //сделанно только для проверки типов

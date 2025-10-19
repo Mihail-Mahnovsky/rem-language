@@ -11,7 +11,7 @@ int main(void) {
     Lexer lexer = Lexer();
     Parser parser = Parser(interpreter.getContext());
 
-    std::ifstream inputFile("../examples/hello_world.rem");
+    std::ifstream inputFile("../examples/factorial.rem");
     if (inputFile.is_open()) {
         std::string res;
         while (!inputFile.eof()) {

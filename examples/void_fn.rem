@@ -1,6 +1,12 @@
-void test(){
-    int a = 2
-    print a + 4
+int test(int ms){
+    return ms
 }
 
-test()
+int tes(int ms){
+    if(ms > 1) {
+        return ms + 9
+    }
+    return ms
+}
+
+println(tes(2) + test(1))

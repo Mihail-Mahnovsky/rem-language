@@ -17,15 +17,29 @@ struct FunctionInfo {
     Type returnType;
 };
 
-class Context{
+class Context {
 private:
     std::vector<std::any> stack;
     std::vector<size_t> frameStack;
     std::unordered_map<std::string, FunctionHeaderNode*> userFunctions;
     std::unordered_map<std::string, FunctionInfo> functions;
+    std::any currentReturn;
 public:
     Context();
     ~Context();
+
+    bool hasReturn() const {
+        return currentReturn.has_value();
+    }
+
+    void setReturn(const std::any& returnValue) {
+        currentReturn = returnValue;
+    }
+
+    std::any getReturn() const {
+        return currentReturn;
+    }
+
     void addUserFunction(std::string name, FunctionHeaderNode* function){
         userFunctions[name] = function;
     }

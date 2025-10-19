@@ -2,11 +2,13 @@
 
 std::any Scope::evaluate(Context& context)  {
     context.pushNewFrame();
+
     for (auto node : nodes){
-        if (dynamic_cast<ReturnNode*>(node)){
-            return node->evaluate(context);
+        auto res = node->evaluate(context);
+
+        if (context.hasReturn()) {
+            return context.getReturn();
         }
-        else { node->evaluate(context); }
     }
     context.popFrame();
     return {};
