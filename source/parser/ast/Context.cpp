@@ -11,7 +11,9 @@ Context::Context()
     , frameStack{}
 {
     functions["println"] = { println, Type::VOID };
+    functions["print"] = { print, Type::VOID };
     functions["scan"] = { scan, Type::STRING };
+    functions["toint"] = { toint, Type::INT };
 }
 
 Context::~Context(){

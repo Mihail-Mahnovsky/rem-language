@@ -7,4 +7,4 @@ int factorial(int n){
     }
 }
 
-println(factorial(5))
+println(toint(scan()))

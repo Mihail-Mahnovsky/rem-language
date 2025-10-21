@@ -1,5 +1,7 @@
 #include "utils.hpp"
 
+#include  <iostream>
+
 #include "parser/ast/FunctionCall.hpp"
 
 bool checkExpressionType(Node* expression, Type type) {
@@ -30,7 +32,17 @@ Type checkExprType(Node* expression) {
     }
 
     if (auto* bin = dynamic_cast<BinaryNode*>(expression) ) {
-        return checkExprType(bin);
+        //return checkExprType(bin);
+            Type leftType = checkExprType(bin->getLeft());
+            Type rightType = checkExprType(bin->getRight());
+
+            if (leftType == rightType) {
+                return leftType;
+            } else {
+                std::cerr << "type mismatch in binnode: "
+                          << "left = " << (int)leftType << " right = " << (int)rightType << std::endl;
+                return Type::VOID;
+        }
     }
 
     if (auto func = dynamic_cast<FunctionCall*>(expression) ) {

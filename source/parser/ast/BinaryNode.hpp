@@ -23,6 +23,8 @@ public:
     BinaryNode(Node* left, Node* right, Operations operation);
     std::any evaluate(Context& context) override;
     bool isExpressionType(Type type);
+    Node* getLeft() { return left; }
+    Node* getRight() { return right; }
 };
 
 
