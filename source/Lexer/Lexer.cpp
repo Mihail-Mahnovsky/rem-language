@@ -61,6 +61,12 @@ std::vector<Token> Lexer::tokeNize(std::string line) {
             case '}':
                 tokens.push_back(Token(TokenType::RBRACE, "}"));
                 break;
+            case '[':
+                tokens.push_back(Token(TokenType::LMS,"["));
+                break;
+            case ']':
+                tokens.push_back(Token(TokenType::RMS,"]"));
+                break;
             default:
                 if (std::isdigit(*it)) {
                     std::string res = std::string(1,*it);
@@ -95,6 +101,7 @@ std::vector<Token> Lexer::tokeNize(std::string line) {
                     else if (res == "while") {tokens.push_back(Token(TokenType::WHILE, res));}
                     else if (res == "return") { tokens.push_back(Token(TokenType::RETURN, res)); }
                     else if (res == "break") { tokens.push_back(Token(TokenType::BREAK, res)); }
+                    else if (res == "new") { tokens.push_back(Token(TokenType::NEW, res));  }
                     else { tokens.push_back(Token(TokenType::ID, res)); }
                 }
                 else if (*it == '\"') {

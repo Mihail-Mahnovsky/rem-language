@@ -9,6 +9,7 @@
 Context::Context()
     : stack{}
     , frameStack{}
+    ,isBreakState(false)
 {
     functions["println"] = { println, Type::VOID };
     functions["print"] = { print, Type::VOID };

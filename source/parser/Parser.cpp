@@ -9,6 +9,7 @@
 #include "ast/BinaryNode.hpp"
 #include "ast/NumberLiteral.hpp"
 #include "ast/BoolLiteral.hpp"
+#include "ast/Break.hpp"
 #include "ast/StringLiteral.hpp"
 #include "ast/Variable.hpp"
 #include "ast/FunctionHeaderNode.hpp"
@@ -79,7 +80,9 @@ Node* Parser::statement() {
                     return parseFunctionCall(name);
                 }
             }
-
+        case TokenType::BREAK:
+            eat(TokenType::BREAK);
+            return new BreakNode();
         case TokenType::WHILE:
             return parseWhile();
         case TokenType::IF:

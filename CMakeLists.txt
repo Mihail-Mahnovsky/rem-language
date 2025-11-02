@@ -25,4 +25,5 @@ add_executable(remlang ${SOURCE_FILES}
         source/stdlib.hpp
         source/parser/ast/FunctionCall.cpp
         source/parser/ast/Scope.cpp
+        source/parser/ast/Break.hpp
 )

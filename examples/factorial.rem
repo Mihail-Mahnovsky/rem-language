@@ -7,4 +7,5 @@ int factorial(int n){
     }
 }
 
-println(toint(scan()))
+println("write your number for factorial")
+println(factorial(toint(scan())))

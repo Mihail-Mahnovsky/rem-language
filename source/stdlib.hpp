@@ -13,13 +13,14 @@ std::any println(std::vector<std::any> arg) {
         try {
             for (auto& i : arg) {
                 if (i.type() == typeid(std::string)) {
-                    std::cout << std::any_cast<std::string>(i) << '\n';
+                    std::cout << std::any_cast<std::string>(i);
                 } else if (i.type() == typeid(int)) {
-                    std::cout << std::any_cast<int>(i) << '\n';
+                    std::cout << std::any_cast<int>(i);
                 } else if (i.type() == typeid(double)) {
-                    std::cout << std::any_cast<double>(i) << '\n';
+                    std::cout << std::any_cast<double>(i);
                 }
             }
+            std::cout << std::endl;
         } catch (const std::bad_any_cast& e) {
             std::cerr << "Error: " << e.what() << '\n';
         }

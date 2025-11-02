@@ -8,6 +8,8 @@ enum class TokenType {
     RPAREN,
     LBRACE,
     RBRACE,
+    LMS,
+    RMS,
 
     COMMA,
     COLON,
@@ -25,6 +27,7 @@ enum class TokenType {
     WHILE,
     RETURN,
     BREAK,
+    NEW,
 
     NUMBER,
     STRING,

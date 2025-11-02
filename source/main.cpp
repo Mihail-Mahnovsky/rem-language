@@ -6,12 +6,11 @@
 #include <fstream>
 
 int main(void) {
-
     Interpreter interpreter = Interpreter();
     Lexer lexer = Lexer();
     Parser parser = Parser(interpreter.getContext());
 
-    std::ifstream inputFile("../examples/factorial.rem");
+    std::ifstream inputFile("../examples/arraytest.rem");
     if (inputFile.is_open()) {
         std::string res;
         while (!inputFile.eof()) {

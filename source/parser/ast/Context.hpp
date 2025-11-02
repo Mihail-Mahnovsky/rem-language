@@ -24,10 +24,13 @@ private:
     std::unordered_map<std::string, FunctionHeaderNode*> userFunctions;
     std::unordered_map<std::string, FunctionInfo> functions;
     std::any currentReturn;
+    bool isBreakState;
 public:
     Context();
     ~Context();
 
+    void setBreakState() { isBreakState = !isBreakState; }
+    bool getBreakState() { return isBreakState; }
     bool hasReturn() const {
         return currentReturn.has_value();
     }
