@@ -26,4 +26,7 @@ add_executable(remlang ${SOURCE_FILES}
         source/parser/ast/FunctionCall.cpp
         source/parser/ast/Scope.cpp
         source/parser/ast/Break.hpp
+        source/parser/ast/ArrayLiteral.hpp
+        source/parser/ast/GetArrayElementNode.hpp
+        source/parser/ast/SetArrayElementNode.hpp
 )

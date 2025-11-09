@@ -36,10 +36,10 @@ private:
     Node* reassigment();
     Node* parseIf();
     Node* parseWhile();
-    Node* parseFunction(std::string& type,std::string name);
     std::vector<Node*> parseScope();
-    Node* parseFuction(std::string& type,std::string name);
+    Node* parseFunction(std::string& type,std::string name);
     Node* parseFunctionCall(std::string& name);
+    Node* parseArray(const std::string& name,size_t size);
 public:
     Parser(Context& ctx);
     std::vector<Node*> parse(std::vector<Token>& tokens);

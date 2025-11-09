@@ -1,6 +1,5 @@
-int input = toint(scan())
-print(input + 2)
+void function(){
+    println("hi!")
+}
 
-[]int arr = new [5]int
-arr[2] = 3
-println(arr[2])
+function()

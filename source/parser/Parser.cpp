@@ -4,6 +4,7 @@
 #include <iostream>
 
 
+#include "ast/ArrayLiteral.hpp"
 #include "ast/Assign.hpp"
 #include "ast/Echo.hpp"
 #include "ast/BinaryNode.hpp"
@@ -20,6 +21,8 @@
 #include "ast/UnaryNode.hpp"
 #include "ast/while.hpp"
 #include "ast/FunctionCall.hpp"
+#include "ast/GetArrayElementNode.hpp"
+#include "ast/SetArrayElementNode.hpp"
 
 Parser::Parser(Context& ctx)
     : pos(0)
@@ -34,6 +37,16 @@ std::vector<Node*> Parser::parse(std::vector<Token>& tokens) {
     pos = 0;
     this->tokens = tokens;
     return statement_list();
+}
+
+
+Type stringToType(std::string type){
+    if (type == "int") { return Type::INT; }
+    else if (type == "str") { return Type::STRING; }
+    else if (type == "char") { return Type::CHAR; }
+    else if (type == "boolean") { return Type::BOOLEAN; }
+    else if (type == "void") { return Type::VOID; }
+    throw std::runtime_error("Unsupported type: " + type);
 }
 
 std::vector<Node*> Parser::statement_list() {
@@ -53,20 +66,36 @@ Node* Parser::statement() {
     Token tok = current();
 
     switch (tok.getType()) {
-        case TokenType::TYPE:
-            if (peek(TokenType::ID)){
-                std::string type = current().getValue();
-                eat(TokenType::TYPE);
+        case TokenType::TYPE: {
+            std::string type = current().getValue();
+            eat(TokenType::TYPE);
+
+            if (current().getType() == TokenType::LMS) {
+                eat(TokenType::LMS);
+                size_t size = std::stoi(current().getValue());
+                eat(TokenType::NUMBER);
+                eat(TokenType::RMS);
+
                 std::string name = current().getValue();
                 eat(TokenType::ID);
-                if (current().getType() == TokenType::ASSIGN){
-                    return declaration(type, name);
-                }else if (current().getType() == TokenType::LPAREN){
-                    eat(TokenType::LPAREN);
-                    return parseFuction(type, name);
-                    }
-                }
+
+                types[name] = stringToType(type);
+
+                return parseArray(name, size);
+            }
+
+            std::string name = current().getValue();
+            eat(TokenType::ID);
+
+            if (current().getType() == TokenType::ASSIGN) {
+                return declaration(type, name);
+            } else if (current().getType() == TokenType::LPAREN) {
+                eat(TokenType::LPAREN);
+                return parseFunction(type, name);
+            }
             break;
+        }
+
         case TokenType::RETURN:
             eat(TokenType::RETURN);
             return new ReturnNode(expression());
@@ -74,10 +103,19 @@ Node* Parser::statement() {
                 if (peek(TokenType::ASSIGN)){
                     return reassigment();
                 }
-                if (peek(TokenType::LPAREN)){
+                else if (peek(TokenType::LPAREN)){
                     std::string name = current().getValue();
                     eat(TokenType::ID);
                     return parseFunctionCall(name);
+                } else if (peek(TokenType::LMS)) {
+                    std::string name = current().getValue();
+                    eat(TokenType::ID);
+                    eat(TokenType::LMS);
+                    Node* index = expression();
+                    eat(TokenType::RMS);
+                    eat(TokenType::ASSIGN);
+                    Node* value = expression();
+                    return new SetArrayElementNode(index, value, offsets[name]);
                 }
             }
         case TokenType::BREAK:
@@ -89,7 +127,6 @@ Node* Parser::statement() {
             return parseIf();
          default:
             return expression();
-            break;
     }
 
     throw std::runtime_error("Uneewxpected token");
@@ -230,6 +267,11 @@ Node *Parser::factor() {
                 eat(TokenType::ID);
                 if (current().getType() == TokenType::LPAREN){
                     return parseFunctionCall(name);
+                }else if (current().getType() == TokenType::LMS) {
+                    eat(TokenType::LMS);
+                    Node* indexOfArray = expression();
+                    eat(TokenType::RMS);
+                    return new GetArrayElementNode(indexOfArray,offsets[name]);
                 }
               //  if (offsets.find(name) == offsets.end()) {
                //     throw std::runtime_error("not find this variable : " + name);
@@ -271,10 +313,6 @@ Node *Parser::declaration(const std::string& type, const std::string& name) {
 Node *Parser::reassigment() {
     std::string name = current().getValue();
     eat(TokenType::ID);
-
-   // if (offsets.find(name) == offsets.end()) {
-    //    throw std::runtime_error("don`t find this variable : " + name);
-   // }
 
     eat(TokenType::ASSIGN);
 
@@ -335,16 +373,8 @@ Node* Parser::parseWhile(){
     return new While(condition,scope);
 }
 
-Type stringToType(std::string type){
-    if (type == "int") { return Type::INT; }
-    else if (type == "str") { return Type::STRING; }
-    else if (type == "char") { return Type::CHAR; }
-    else if (type == "boolean") { return Type::BOOLEAN; }
-    else if (type == "void") { return Type::VOID; }
-    throw std::runtime_error("Unsupported type: " + type);
-}
 
-Node* Parser::parseFuction(std::string& type,std::string name){
+Node* Parser::parseFunction(std::string& type,std::string name){
     types[name] = stringToType(type);
 
     std::vector<Arg> args;
@@ -376,6 +406,45 @@ Node* Parser::parseFuction(std::string& type,std::string name){
     }
 
     return new FunctionHeaderNode(name,scope,args);
+}
+
+Node *Parser::parseArray(const std::string& name, size_t size) {
+    types[name] = Type::ARRAY;
+    offsets[name] = currentOffset;
+    int assignedOffset = currentOffset;
+    ++currentOffset;
+
+    if (current().getType() != TokenType::ASSIGN) {
+        throw std::runtime_error("Array must be init");
+    }
+
+    eat(TokenType::ASSIGN);
+    eat(TokenType::LBRACE);
+
+    std::vector<Node*> elements;
+
+    if (current().getType() != TokenType::RBRACE) {
+        while (true) {
+            elements.push_back(expression());
+
+            if (current().getType() == TokenType::COMMA)
+                eat(TokenType::COMMA);
+            else
+                break;
+        }
+    }
+
+    eat(TokenType::RBRACE);
+
+    while (elements.size() < size) {
+        elements.push_back(new NumberLiteral(0));
+    }
+
+    if (elements.size() > size) {
+        throw std::runtime_error("Too many elements in array initialization");
+    }
+
+    return new Assign(assignedOffset, new ArrayLiteral(elements));
 }
 
 bool Parser::peek(TokenType wantType) {

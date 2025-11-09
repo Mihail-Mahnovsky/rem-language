@@ -7,6 +7,7 @@ enum class Type{
     STRING,
     CHAR,
     VOID,
+    ARRAY
 };
 
 #endif
