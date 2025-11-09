@@ -1,3 +1,9 @@
-int[5] arr = {}
-arr[2] = 5
-println(arr[2])
+void function(int[5] arr){
+    int i = 0
+    while(i < len(arr)){
+        println(arr[i])
+        i = i + 1
+    }
+}
+int[5] arr = {6,4,12,3,5}
+function(arr)

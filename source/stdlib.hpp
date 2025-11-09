@@ -8,16 +8,23 @@
 
 #include <vector>
 
-std::any println(std::vector<std::any> arg) {
-    if (!arg.empty()) {
+std::any println(std::vector<std::any> args) {
+    if (!args.empty()) {
         try {
-            for (auto& i : arg) {
+            for (auto& i : args) {
                 if (i.type() == typeid(std::string)) {
                     std::cout << std::any_cast<std::string>(i);
                 } else if (i.type() == typeid(int)) {
                     std::cout << std::any_cast<int>(i);
                 } else if (i.type() == typeid(double)) {
                     std::cout << std::any_cast<double>(i);
+                }else if (i.type() == typeid(std::vector<std::any>)) {
+                    std::cout << "{";
+                    for (size_t i = 0; i < std::any_cast<std::vector<std::any>>(args[0]).size(); ++i) {
+                        std::cout << std::any_cast<double>(std::any_cast<std::vector<std::any>>(args[i])[i]);
+                        if (i + 1 < args.size()) std::cout << ", ";
+                    }
+                    std::cout << "}";
                 }
             }
             std::cout << std::endl;
@@ -67,6 +74,10 @@ std::any scan(std::vector<std::any> arg) {
     std::string str;
     std::cin >> str;
     return str;
+}
+
+std::any len(std::vector<std::any> arg) {
+    return static_cast<double>(std::any_cast<std::vector<std::any>>(arg.at(0)).size());
 }
 
 

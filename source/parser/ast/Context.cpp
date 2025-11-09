@@ -15,6 +15,7 @@ Context::Context()
     functions["print"] = { print, Type::VOID };
     functions["scan"] = { scan, Type::STRING };
     functions["toint"] = { toint, Type::INT };
+    functions["len"] = {len,Type::INT};
 }
 
 Context::~Context(){

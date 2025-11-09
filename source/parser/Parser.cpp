@@ -382,7 +382,13 @@ Node* Parser::parseFunction(std::string& type,std::string name){
     while (current().getType() != TokenType::RPAREN){
         Type type = stringToType(current().getValue());
         eat(TokenType::TYPE);
+        if (current().getType() == TokenType::LMS) {
+            eat(TokenType::LMS);
+            Node* size = expression();
+            eat(TokenType::RMS);
+        }
         std::string argName = current().getValue();
+
         eat(TokenType::ID);
 
         offsets[argName] = currentOffset;
