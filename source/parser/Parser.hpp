@@ -18,7 +18,7 @@ private:
     Context& context;
 
 private:
-    bool peek(TokenType wantType);
+    bool peek(TokenType wantType) const;
     void eat(TokenType type);
     Token current() { if (pos < tokens.size()) {return tokens[pos];} else return tokens.back(); };
     std::vector<Node*> statement_list();
@@ -39,7 +39,7 @@ private:
     std::vector<Node*> parseScope();
     Node* parseFunction(std::string& type,std::string name);
     Node* parseFunctionCall(std::string& name);
-    Node* parseArray(const std::string& name,size_t size);
+    Node* parseArray();
 public:
     Parser(Context& ctx);
     std::vector<Node*> parse(std::vector<Token>& tokens);

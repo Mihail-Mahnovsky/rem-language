@@ -23,6 +23,8 @@
 #include "ast/FunctionCall.hpp"
 #include "ast/GetArrayElementNode.hpp"
 #include "ast/SetArrayElementNode.hpp"
+#include "../ErrorLogger.hpp"
+#include "../utils.hpp"
 
 Parser::Parser(Context& ctx)
     : pos(0)
@@ -41,12 +43,25 @@ std::vector<Node*> Parser::parse(std::vector<Token>& tokens) {
 
 
 Type stringToType(std::string type){
-    if (type == "int") { return Type::INT; }
+    static std::pair<std::string_view, Type> typesView[] = {
+        { "int", Type::INT },
+    { "str", Type::STRING },
+    { "char", Type::CHAR },
+    { "boolean", Type::BOOLEAN },
+    { "void", Type::VOID },
+    };
+
+    for (const auto& view : typesView) {
+        if (view.first == type) {
+            return view.second;
+        }
+    }
+    /*if (type == "int") { return Type::INT; }
     else if (type == "str") { return Type::STRING; }
     else if (type == "char") { return Type::CHAR; }
     else if (type == "boolean") { return Type::BOOLEAN; }
-    else if (type == "void") { return Type::VOID; }
-    throw std::runtime_error("Unsupported type: " + type);
+    else if (type == "void") { return Type::VOID; }*/
+    ErrorLogger::throwError("Unsupported type: " + type);
 }
 
 std::vector<Node*> Parser::statement_list() {
@@ -71,17 +86,7 @@ Node* Parser::statement() {
             eat(TokenType::TYPE);
 
             if (current().getType() == TokenType::LMS) {
-                eat(TokenType::LMS);
-                size_t size = std::stoi(current().getValue());
-                eat(TokenType::NUMBER);
-                eat(TokenType::RMS);
-
-                std::string name = current().getValue();
-                eat(TokenType::ID);
-
-                types[name] = stringToType(type);
-
-                return parseArray(name, size);
+                return parseArray();
             }
 
             std::string name = current().getValue();
@@ -129,7 +134,7 @@ Node* Parser::statement() {
             return expression();
     }
 
-    throw std::runtime_error("Uneewxpected token");
+    ErrorLogger::throwError("Unexpected token");
 }
 
 Node* Parser::parseFunctionCall(std::string& name)
@@ -290,10 +295,12 @@ Node *Parser::factor() {
 }
 
 Node *Parser::declaration(const std::string& type, const std::string& name) {
-    if (type == "int") { types[name] = Type::INT; }
-    else if (type == "str") { types[name] = Type::STRING; }
-    else if (type == "char") { types[name] = Type::CHAR; }
-    else if (type == "boolean") { types[name] = Type::BOOLEAN; }
+    //if (type == "int") { types[name] = Type::INT; }
+    //else if (type == "str") { types[name] = Type::STRING; }
+    //else if (type == "char") { types[name] = Type::CHAR; }
+    //else if (type == "boolean") { types[name] = Type::BOOLEAN; }
+
+    types[name] = stringToType(type);
 
     offsets[name] = currentOffset;
     int assignedOffset = currentOffset;
@@ -303,7 +310,7 @@ Node *Parser::declaration(const std::string& type, const std::string& name) {
     Node* right = expression();
 
     if (!checkExpressionType(right, types[name])) {
-        std::cerr << "error: type mismatch in declaration of " << name << std::endl;
+        ErrorLogger::throwError("error: type mismatch in declaration of " + name + "\n");
        exit(1);
     }
 
@@ -318,7 +325,7 @@ Node *Parser::reassigment() {
 
     Node* right = expression();
     if (!checkExpressionType(right, types[name])) {
-        std::cerr << "error: type mismatch in declaration of " << name << std::endl;
+        ErrorLogger::throwError("error: type mismatch in declaration of " + name + "\n");
     }
     int offset = offsets[name];
     return new Assign(offset, right);
@@ -407,21 +414,32 @@ Node* Parser::parseFunction(std::string& type,std::string name){
 
     if (types[name] != Type::VOID && scope->getReturn() != nullptr){
         if (!checkExpressionType(dynamic_cast<ReturnNode*>(scope->getReturn())->getReturnValue(), types[name])){
-            std::cerr << "error: type mismatch in function creating ret val and type not eqvial " << name << std::endl;
+            ErrorLogger::throwError("return type mismatch in function");
         }
     }
 
     return new FunctionHeaderNode(name,scope,args);
 }
 
-Node *Parser::parseArray(const std::string& name, size_t size) {
+Node *Parser::parseArray() {
+    eat(TokenType::LMS);
+    size_t size = std::stoi(current().getValue());
+    if (size == 0) {
+        ErrorLogger::throwError("Array size can't be 0");
+    }
+    eat(TokenType::NUMBER);
+    eat(TokenType::RMS);
+
+    std::string name = current().getValue();
+    eat(TokenType::ID);
+
     types[name] = Type::ARRAY;
     offsets[name] = currentOffset;
     int assignedOffset = currentOffset;
     ++currentOffset;
 
     if (current().getType() != TokenType::ASSIGN) {
-        throw std::runtime_error("Array must be init");
+        ErrorLogger::throwError("Array must be init");
     }
 
     eat(TokenType::ASSIGN);
@@ -429,31 +447,34 @@ Node *Parser::parseArray(const std::string& name, size_t size) {
 
     std::vector<Node*> elements;
 
-    if (current().getType() != TokenType::RBRACE) {
-        while (true) {
-            elements.push_back(expression());
+    //if (current().getType() != TokenType::RBRACE) {
 
-            if (current().getType() == TokenType::COMMA)
-                eat(TokenType::COMMA);
-            else
-                break;
+    for (size_t i = 0; i < size; ++i) {
+        if (current().getType() != TokenType::RBRACE) {
+            elements.push_back(expression());
+            if (current().getType() == TokenType::RBRACE) {
+                continue;
+            }
         }
+
+        if (current().getType() == TokenType::RBRACE) {
+            elements.push_back(new NumberLiteral(0));
+        }
+        else if (i < (size - 1)) {
+            eat(TokenType::COMMA);
+        }
+    }
+
+    if (current().getType() != TokenType::RBRACE) {
+        ErrorLogger::throwError("Too many elements in array initialization");
     }
 
     eat(TokenType::RBRACE);
 
-    while (elements.size() < size) {
-        elements.push_back(new NumberLiteral(0));
-    }
-
-    if (elements.size() > size) {
-        throw std::runtime_error("Too many elements in array initialization");
-    }
-
     return new Assign(assignedOffset, new ArrayLiteral(elements));
 }
 
-bool Parser::peek(TokenType wantType) {
+bool Parser::peek(TokenType wantType) const {
     if (pos < tokens.size() && tokens[pos + 1].getType() == wantType) {
         return true;
     }
@@ -465,6 +486,6 @@ void Parser::eat(TokenType type) {
         ++pos;
     }
     else {
-        throw std::invalid_argument("Invaliddd token type " + current().toString());
+        ErrorLogger::throwError("Syntax Error: Expected token " + typeToString(current().getType()) + " , but found " + typeToString(type) + " at line . ");
     }
 }

@@ -1,9 +1,11 @@
-void function(int[5] arr){
+void function(int[6] arr){
     int i = 0
     while(i < len(arr)){
         println(arr[i])
         i = i + 1
     }
 }
-int[5] arr = {6,4,12,3,5}
+
+char[6] arr = { 'a' , "f" , "true", "false" , " Kurgyzstan","Kazahstan" }
+# int[3, 3] arr1 = { {2, 2, 2}, { 2, 2, 2 } }
 function(arr)

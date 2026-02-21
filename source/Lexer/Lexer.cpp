@@ -13,59 +13,59 @@ std::vector<Token> Lexer::tokeNize(std::string line) {
             case '\r':
                 break;
             case '+':
-                tokens.push_back(Token(TokenType::OPERATOR, "+"));
+                tokens.emplace_back(Token(TokenType::OPERATOR, "+"));
                 break;
             case '-':
-                tokens.push_back(Token(TokenType::OPERATOR, "-"));
+                tokens.emplace_back(Token(TokenType::OPERATOR, "-"));
                 break;
             case '*':
-                tokens.push_back(Token(TokenType::OPERATOR,"*"));
+                tokens.emplace_back(TokenType::OPERATOR,"*");
                 break;
             case '/':
-                tokens.push_back(Token(TokenType::OPERATOR,"/"));
+                tokens.emplace_back(Token(TokenType::OPERATOR,"/"));
                 break;
             case ';':
-                tokens.push_back(Token(TokenType::SEMICOLON,";"));
+                tokens.emplace_back(Token(TokenType::SEMICOLON,";"));
                 break;
             case ':':
-                tokens.push_back(Token(TokenType::COLON,":"));
+                tokens.emplace_back(Token(TokenType::COLON,":"));
                 break;
             case ',':
-                tokens.push_back(Token(TokenType::COMMA,","));
+                tokens.emplace_back(Token(TokenType::COMMA,","));
                 break;
             case '=':
-                if (peek(line,'=',std::distance(line.begin(), it) + 1)){tokens.push_back(Token(TokenType::OPERATOR, "==")); ++it;}
-                else {tokens.push_back(Token(TokenType::ASSIGN, "="));}
+                if (peek(line,'=',std::distance(line.begin(), it) + 1)){tokens.emplace_back(Token(TokenType::OPERATOR, "==")); ++it;}
+                else {tokens.emplace_back(Token(TokenType::ASSIGN, "="));}
                 break;
             case '!':
-                if (peek(line,'=',std::distance(line.begin(), it) + 1)){tokens.push_back(Token(TokenType::OPERATOR, "!=")); ++it;}
-                else {tokens.push_back(Token(TokenType::OPERATOR, "!"));}
+                if (peek(line,'=',std::distance(line.begin(), it) + 1)){tokens.emplace_back(Token(TokenType::OPERATOR, "!=")); ++it;}
+                else {tokens.emplace_back(Token(TokenType::OPERATOR, "!"));}
                 break;
             case '<':
-                if (peek(line,'=',std::distance(line.begin(), it) + 1)){tokens.push_back(Token(TokenType::OPERATOR, "<=")); ++it;}
-                else {tokens.push_back(Token(TokenType::OPERATOR, "<"));}
+                if (peek(line,'=',std::distance(line.begin(), it) + 1)){tokens.emplace_back(Token(TokenType::OPERATOR, "<=")); ++it;}
+                else {tokens.emplace_back(Token(TokenType::OPERATOR, "<"));}
                 break;
             case '>':
                 if (peek(line,'=',std::distance(line.begin(), it) + 1)){tokens.push_back(Token(TokenType::OPERATOR, ">=")); ++it;}
-                else {tokens.push_back(Token(TokenType::OPERATOR, ">"));}
+                else {tokens.emplace_back(Token(TokenType::OPERATOR, ">"));}
                 break;
             case '(':
-                tokens.push_back(Token(TokenType::LPAREN, "("));
+                tokens.emplace_back(Token(TokenType::LPAREN, "("));
                 break;
             case ')':
-                tokens.push_back(Token(TokenType::RPAREN, ")"));
+                tokens.emplace_back(Token(TokenType::RPAREN, ")"));
                 break;
             case '{':
-                tokens.push_back(Token(TokenType::LBRACE, "{"));
+                tokens.emplace_back(Token(TokenType::LBRACE, "{"));
                 break;
             case '}':
-                tokens.push_back(Token(TokenType::RBRACE, "}"));
+                tokens.emplace_back(Token(TokenType::RBRACE, "}"));
                 break;
             case '[':
-                tokens.push_back(Token(TokenType::LMS,"["));
+                tokens.emplace_back(Token(TokenType::LMS,"["));
                 break;
             case ']':
-                tokens.push_back(Token(TokenType::RMS,"]"));
+                tokens.emplace_back(Token(TokenType::RMS,"]"));
                 break;
             default:
                 if (std::isdigit(*it)) {
@@ -76,7 +76,7 @@ std::vector<Token> Lexer::tokeNize(std::string line) {
                         ++it;
                     }
                     --it;
-                    tokens.push_back(Token(TokenType::NUMBER, res));
+                    tokens.emplace_back(Token(TokenType::NUMBER, res));
                 }
                 else if (std::isalpha(*it)) {
                     std::string res = std::string(1,*it);
@@ -86,23 +86,23 @@ std::vector<Token> Lexer::tokeNize(std::string line) {
                         ++it;
                     }
                     --it;
-                    if (res == "true") {tokens.push_back(Token(TokenType::TRUE, res)); }
-                    else if (res == "false") {tokens.push_back(Token(TokenType::FALSE, res)); }
-                    else if (res == "void") {tokens.push_back(Token(TokenType::TYPE, res));}
-                    else if (res == "int") {tokens.push_back(Token(TokenType::TYPE,res));}
-                    else if (res == "boolean") {tokens.push_back(Token(TokenType::TYPE, res));}
-                    else if (res == "str") {tokens.push_back(Token(TokenType::TYPE, res));}
-                    else if (res == "char") {tokens.push_back(Token(TokenType::TYPE, res));}
-                    else if (res == "or") { tokens.push_back(Token(TokenType::OR, res));}
-                    else if (res == "and") { tokens.push_back(Token(TokenType::AND, res));}
-                    else if (res == "if") { tokens.push_back(Token(TokenType::IF, res));}
-                    else if (res == "else") { tokens.push_back(Token(TokenType::ELSE, res));}
-                    else if (res == "elif") {tokens.push_back(Token(TokenType::ELIF, res));}
-                    else if (res == "while") {tokens.push_back(Token(TokenType::WHILE, res));}
-                    else if (res == "return") { tokens.push_back(Token(TokenType::RETURN, res)); }
-                    else if (res == "break") { tokens.push_back(Token(TokenType::BREAK, res)); }
-                    else if (res == "new") { tokens.push_back(Token(TokenType::NEW, res));  }
-                    else { tokens.push_back(Token(TokenType::ID, res)); }
+                    if (res == "true") {tokens.emplace_back(Token(TokenType::TRUE, res)); }
+                    else if (res == "false") {tokens.emplace_back(Token(TokenType::FALSE, res)); }
+                    else if (res == "void") {tokens.emplace_back(Token(TokenType::TYPE, res));}
+                    else if (res == "int") {tokens.emplace_back(Token(TokenType::TYPE,res));}
+                    else if (res == "boolean") {tokens.emplace_back(Token(TokenType::TYPE, res));}
+                    else if (res == "str") {tokens.emplace_back(Token(TokenType::TYPE, res));}
+                    else if (res == "char") {tokens.emplace_back(Token(TokenType::TYPE, res));}
+                    else if (res == "or") { tokens.emplace_back(Token(TokenType::OR, res));}
+                    else if (res == "and") { tokens.emplace_back(Token(TokenType::AND, res));}
+                    else if (res == "if") { tokens.emplace_back(Token(TokenType::IF, res));}
+                    else if (res == "else") { tokens.emplace_back(Token(TokenType::ELSE, res));}
+                    else if (res == "elif") {tokens.emplace_back(Token(TokenType::ELIF, res));}
+                    else if (res == "while") {tokens.emplace_back(Token(TokenType::WHILE, res));}
+                    else if (res == "return") { tokens.emplace_back(Token(TokenType::RETURN, res)); }
+                    else if (res == "break") { tokens.emplace_back(Token(TokenType::BREAK, res)); }
+                    else if (res == "new") { tokens.emplace_back(Token(TokenType::NEW, res));  }
+                    else { tokens.emplace_back(Token(TokenType::ID, res)); }
                 }
                 else if (*it == '\"') {
                     ++it;
@@ -114,7 +114,7 @@ std::vector<Token> Lexer::tokeNize(std::string line) {
                     if (it == line.end())
                         throw std::runtime_error("Unterminated string literal");
                     //++it;
-                    tokens.push_back(Token(TokenType::STRING, res));
+                    tokens.emplace_back(Token(TokenType::STRING, res));
                 }
                 else if (*it == '\'') {
                     ++it;
@@ -122,7 +122,7 @@ std::vector<Token> Lexer::tokeNize(std::string line) {
                     if (it == line.end())
                         throw std::runtime_error("Unterminated char literal");
                     ++it;
-                    tokens.push_back(Token(TokenType::CHARACTER, res));
+                    tokens.emplace_back(Token(TokenType::CHARACTER, res));
                 }
                 else {
                     throw std::runtime_error("Unexpected character: " + std::string(1, *it));
