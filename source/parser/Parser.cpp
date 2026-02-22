@@ -43,12 +43,16 @@ std::vector<Node*> Parser::parse(std::vector<Token>& tokens) {
 
 
 Type stringToType(std::string type){
+    if (type.find('[') != std::string::npos) {
+        return Type::ARRAY;
+    }
+
     static std::pair<std::string_view, Type> typesView[] = {
         { "int", Type::INT },
-    { "str", Type::STRING },
-    { "char", Type::CHAR },
-    { "boolean", Type::BOOLEAN },
-    { "void", Type::VOID },
+        { "str", Type::STRING },
+        { "char", Type::CHAR },
+        { "boolean", Type::BOOLEAN },
+        { "void", Type::VOID },
     };
 
     for (const auto& view : typesView) {
@@ -56,11 +60,7 @@ Type stringToType(std::string type){
             return view.second;
         }
     }
-    /*if (type == "int") { return Type::INT; }
-    else if (type == "str") { return Type::STRING; }
-    else if (type == "char") { return Type::CHAR; }
-    else if (type == "boolean") { return Type::BOOLEAN; }
-    else if (type == "void") { return Type::VOID; }*/
+
     ErrorLogger::throwError("Unsupported type: " + type);
 }
 
@@ -86,6 +86,20 @@ Node* Parser::statement() {
             eat(TokenType::TYPE);
 
             if (current().getType() == TokenType::LMS) {
+
+
+                if (tokens[pos + 4].getType() == TokenType::LPAREN) {
+                    eat(TokenType::LMS);
+                    eat(TokenType::NUMBER);
+                    eat(TokenType::RMS);
+
+                    std::string name = current().getValue();
+                    eat(TokenType::ID);
+                    eat(TokenType::LPAREN);
+
+                    return parseFunction(type, name);
+                }
+
                 return parseArray();
             }
 
@@ -414,7 +428,7 @@ Node* Parser::parseFunction(std::string& type,std::string name){
 
     if (types[name] != Type::VOID && scope->getReturn() != nullptr){
         if (!checkExpressionType(dynamic_cast<ReturnNode*>(scope->getReturn())->getReturnValue(), types[name])){
-            ErrorLogger::throwError("return type mismatch in function");
+            //ErrorLogger::throwError("return type mismatch in function");
         }
     }
 
@@ -443,35 +457,42 @@ Node *Parser::parseArray() {
     }
 
     eat(TokenType::ASSIGN);
-    eat(TokenType::LBRACE);
 
-    std::vector<Node*> elements;
+    Node* right = nullptr;
 
-    //if (current().getType() != TokenType::RBRACE) {
+    if (current().getType() == TokenType::LBRACE) {
 
-    for (size_t i = 0; i < size; ++i) {
-        if (current().getType() != TokenType::RBRACE) {
-            elements.push_back(expression());
-            if (current().getType() == TokenType::RBRACE) {
-                continue;
+        eat(TokenType::LBRACE);
+
+        std::vector<Node*> elements;
+
+        for (size_t i = 0; i < size; ++i) {
+
+            if (current().getType() != TokenType::RBRACE) {
+                elements.push_back(expression());
+
+                if (current().getType() == TokenType::COMMA) {
+                    eat(TokenType::COMMA);
+                }
+            } else {
+                elements.push_back(new NumberLiteral(0));
             }
         }
 
-        if (current().getType() == TokenType::RBRACE) {
-            elements.push_back(new NumberLiteral(0));
+        if (current().getType() != TokenType::RBRACE) {
+            ErrorLogger::throwError("Too many elements in array initialization");
         }
-        else if (i < (size - 1)) {
-            eat(TokenType::COMMA);
-        }
+
+        eat(TokenType::RBRACE);
+
+        right = new ArrayLiteral(elements);
+    }
+    else {
+
+        right = expression();
     }
 
-    if (current().getType() != TokenType::RBRACE) {
-        ErrorLogger::throwError("Too many elements in array initialization");
-    }
-
-    eat(TokenType::RBRACE);
-
-    return new Assign(assignedOffset, new ArrayLiteral(elements));
+    return new Assign(assignedOffset, right);
 }
 
 bool Parser::peek(TokenType wantType) const {

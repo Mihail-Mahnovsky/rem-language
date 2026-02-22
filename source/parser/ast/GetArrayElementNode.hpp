@@ -14,11 +14,30 @@ public:
     {}
 
     std::any evaluate(Context &context) override {
-        if (std::any_cast<double>(indexOfArray->evaluate(context)) < static_cast<double>(std::any_cast<std::vector<std::any>>(context.get(offsetArray)).size())) {
-            return std::any_cast<std::vector<std::any>>(context.get(offsetArray)).at(std::any_cast<double>(indexOfArray->evaluate(context)));
-        }else {
-            throw std::runtime_error("error with array size");
+        std::any arrayAny = context.get(offsetArray);
+
+        if (!arrayAny.has_value()) {
+            throw std::runtime_error("Array not initialized");
         }
+
+        if (arrayAny.type() != typeid(std::vector<std::any>)) {
+            throw std::runtime_error("Variable is not an array");
+        }
+
+        auto array = std::any_cast<std::vector<std::any>>(arrayAny);
+
+        std::any indexAny = indexOfArray->evaluate(context);
+        if (indexAny.type() != typeid(double)) {
+            throw std::runtime_error("Array index must be a number");
+        }
+
+        int index = static_cast<int>(std::any_cast<double>(indexAny));
+
+        if (index < 0 || index >= array.size()) {
+            throw std::runtime_error("Array index out of bounds");
+        }
+
+        return array[index];
     }
 };
 

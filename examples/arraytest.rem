@@ -1,11 +1,12 @@
-void function(int[6] arr){
-    int i = 0
-    while(i < len(arr)){
-        println(arr[i])
-        i = i + 1
-    }
+str[6] function() {
+    str[6] arr = { "a" , "f" , "true", "false" , "Kurgyzstan", "Kazahstan" }
+    return arr
 }
 
-char[6] arr = { 'a' , "f" , "true", "false" , " Kurgyzstan","Kazahstan" }
-# int[3, 3] arr1 = { {2, 2, 2}, { 2, 2, 2 } }
-function(arr)
+str[6] ab = function()
+
+int i = 0
+while(i < 6) {
+    println(ab[i])
+    i = i + 1
+}

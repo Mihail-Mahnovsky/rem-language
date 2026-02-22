@@ -7,8 +7,10 @@ std::any Scope::evaluate(Context& context)  {
         auto res = node->evaluate(context);
 
         if (context.hasReturn()){
+            auto ret = context.getReturn();
+            context.clearReturn();
             context.popFrame();
-            return context.getReturn();
+            return ret;
         }
     }
     context.popFrame();

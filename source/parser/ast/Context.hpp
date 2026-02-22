@@ -43,6 +43,10 @@ public:
         return currentReturn;
     }
 
+    void clearReturn() {
+        currentReturn.reset();
+    }
+
     void addUserFunction(std::string name, FunctionHeaderNode* function){
         userFunctions[name] = function;
     }
